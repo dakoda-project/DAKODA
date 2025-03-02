@@ -1,0 +1,309 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F8F8F8; /* Light Gray */
+    color: #333;
+}
+
+/* Header */
+header {
+    background-color: #4A90E2; /* Nice Pastel Blue */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #D7E3FC; /* Light Blue */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    display: block;
+    background: #FFD700; /* Gold */
+    padding: 10px;
+    color: #1E3A8A; /* Dark Blue */
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background: #FFC107; /* Slightly darker gold */
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background-color: #F8F8F8; /* Light Gray */
+    overflow-y: auto;
+}
+
+h2 {
+    color: #1E3A8A;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #4A90E2;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Features Section */
+.features {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.features h2 {
+    color: #1E3A8A;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.features-grid {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Reduced gap */
+    flex-wrap: wrap;
+    max-width: 800px; /* Smaller max width */
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: white;
+    padding: 12px; /* Smaller padding */
+    border-radius: 6px; /* Slightly smaller border radius */
+    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 220px; /* Reduced width */
+    font-size: 0.85em; /* Reduced text size */
+}
+
+.feature-card .icon {
+    font-size: 1.5em; /* Smaller icon */
+}
+
+.feature-card h3 {
+    font-size: 1.1em;
+    margin: 8px 0;
+}
+
+.feature-card p {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #FFD700;
+    color: #1E3A8A;
+    padding: 6px 10px; /* Smaller button */
+    border-radius: 5px;
+    font-size: 0.9em; /* Reduce button text size */
+}
+
+.cta-button:hover {
+    background-color: #FFC107;
+}
+
+/* Learn More Section */
+.learn-more {
+    background-color: #E8F0FE;
+    text-align: center;
+    padding: 25px 10px; /* Reduce padding */
+}
+
+.learn-more h2 {
+    font-size: 1.5em; /* Reduce heading size */
+}
+
+.learn-more p {
+    font-size: 1em;
+    max-width: 600px; /* Reduce text width */
+    margin: 10px auto 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    background-color: #4A90E2; /* Blue */
+    color: white;
+    padding: 30px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 1.2em;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Repository Page Styling */
+.repo-title {
+    color: #1E3A8A;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.repo-description {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Authentication Button */
+.auth-btn {
+    background-color: #FFD700;
+    color: 1E3A8A;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1em;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.auth-btn:hover {
+    background-color: #e68900;
+}
+
+/* Repository Table */
+.repo-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.repo-table th, .repo-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.repo-table th {
+    background-color: #1E90FF;
+    color: white;
+    font-weight: bold;
+}
+
+.repo-table td a {
+    color: #1E90FF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.repo-table td a:hover {
+    text-decoration: underline;
+}
