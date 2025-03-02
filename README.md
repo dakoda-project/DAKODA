@@ -136,3 +136,7 @@ If a dataset or document should be restricted:
 Move it to static/private/ instead of static/downloads/
 Use authentication to control access (not covered in Eleventy by default)
 
+## 🚀 Deployment Guide
+For detailed deployment instructions, see the [Deployment Guide](DEPLOYMENT.md).
+
+
