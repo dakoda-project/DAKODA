@@ -13,6 +13,25 @@ Before running the site, ensure you have:
 - **Node.js** (v16+ recommended) → [Download here](https://nodejs.org/)
 - **npm** (comes with Node.js)
 
+### **⚠️ Important Note on Node.js Version**
+
+Eleventy **3.0.0** requires **Node.js 18 or later**, which may cause compatibility issues if you're using an older version like **Node 16**.
+
+To check your current Node.js version, run:
+```sh
+node -v
+```
+🔄 How to Upgrade Node.js Using nvm
+```sh
+nvm install 18
+nvm use 18
+```
+To make Node 18 the default version, run:
+```sh
+nvm alias default 18
+```
+
+
 ### **2️⃣ Clone the Repository**
 ```sh
 git clone https://github.com/dakoda-project/DAKODA.git
