@@ -37,7 +37,7 @@ nvm alias default 18
 git clone https://github.com/dakoda-project/DAKODA.git
 cd DAKODA
 ```
-### 3️⃣ Install Dependencies
+### 3️⃣ Install Dependencies & Lock Eleventy Version
 Install the required Node.js packages:
 ```sh
 npm install
@@ -46,6 +46,29 @@ npm install
 To start the local development server:
 ```sh
 npx eleventy --serve
+```
+To prevent accidental updates and ensure all team members use the same Eleventy version, we install Eleventy locally:
+```sh
+npm install --save-dev @11ty/eleventy@3.0.0
+```
+✅ This locks the project to Eleventy 3.0.0, avoiding unintended updates.
+Instead of using npx eleventy, run:
+```sh
+npm run start
+```
+✔ This method:
+1. Prevents accidental version updates
+2. Ensures everyone uses the same version
+3. Works consistently across all machines & the university server
+
+### Alternative Package Managers
+To avoid potential security risks with npm, you can use:
+pnpm → Faster & more secure alternative to npm
+yarn → Another alternative with better version locking
+
+```sh
+pnpm install # If using pnpm:
+yarn install # If using yarn:
 ```
 
 ### 📂 Project Structure
