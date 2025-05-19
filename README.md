@@ -4,6 +4,16 @@
 
 This repository contains the Eleventy-based website for the DAKODA Infrastructure project. It provides access to linguistic corpora, interactive dashboards, and related documentation.
 
+✨ Features
+
+- 🌐 Bilingual support: German (default) and English (toggle in header)
+- 📁 Dynamic corpus repository page (auto-updated via metadata)
+- 📊 Dashboard integrations (external links to Streamlit-based tools)
+- 📚 Documentation and downloadable notebooks
+- 💡 Easy-to-maintain static site using Eleventy
+- 🎨 Professionally styled UI with responsive layout and light/dark mode toggle
+
+
 ## 🚀 Getting Started
 
 Follow these steps to clone, set up, and run the Eleventy-based site locally.
@@ -71,6 +81,14 @@ pnpm install # If using pnpm:
 yarn install # If using yarn:
 ```
 
+🈯 Multilingual File Structure
+
+Each content page has two versions:
+- `*.de.njk` → German version (default)
+- `*.en.njk` → English version
+
+Eleventy builds pages like `index.de.html` and `index.en.html`. The site displays the German version by default, with a toggle in the header to switch to English.
+
 ### 📂 Project Structure
 ```
 📦 DAKODA
@@ -126,6 +144,8 @@ Example metadata entry:
 }
 
 ```
+🌍 Language Note: You can use language-specific corpus titles in `corpora.json`. These will be shown as-is in each language version of the repository page.
+
 ### 3️⃣ Update the Repository Page to Display the New Corpus
 The repository page dynamically reads from corpora.json. No extra steps are needed if the metadata is correctly formatted.
 
@@ -178,7 +198,23 @@ If a dataset or document should be restricted:
 Move it to static/private/ instead of static/downloads/
 Use authentication to control access (not covered in Eleventy by default)
 
+###  🤝 Contribution Guidelines
+
+To contribute to this project:
+```
+1. Fork the repository.
+2. Create a feature branch:
+git checkout -b feature/your-feature-name
+3. Make your changes and commit:
+git commit -m "Add: Your feature description"
+4. Push your changes:
+git push origin feature/your-feature-name
+5. Open a pull request (PR) on GitHub.
+✅ Tip: Please test your changes locally before opening a PR.
+```
+
 ## 🚀 Deployment Guide
-For detailed deployment instructions, see the [Deployment Guide](DEPLOYMENT.md).
+Deployment is managed via the university server (not Netlify). The full guide will be available in `DEPLOYMENT.md`.
+
 
 
