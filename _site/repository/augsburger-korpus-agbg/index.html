@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script src="/js/theme.js" defer></script>
+  <script src="/js/lang.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <img src="/css/img/logo.png" alt="DAKODA Logo" class="logo" />
+        <h1 class="site-title"><span>DAKODA</span> Infrastructure</h1>
+      </div>
+
+      <div class="header-actions">
+        <div class="search-container">
+          <input type="text" placeholder="Search..." class="search-input" />
+          <span class="search-icon">🔍</span>
+        </div>
+        <div class="lang-toggle">
+          <button onclick="setLanguage('de')" class="lang-btn" id="de-btn">DE</button>
+          <button onclick="setLanguage('en')" class="lang-btn" id="en-btn">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="/index.de.html">Home</a></li>
+        <li><a href="/repository.de.html">Repository</a></li>
+        <li><a href="/dashboard.de.html">Dashboard</a></li>
+        <li><a href="/docs.de.html">Documentation</a></li>
+        <li><a href="/notebooks.de.html">Notebooks</a></li>
+      </ul>
+    </aside>
+
+    <section class="main-content">
+      
+<nav class="breadcrumbs">
+  <a href="/">Home</a> &gt; 
+  <a href="/repository/">Repository</a> &gt; 
+  <span>Augsburger Korpus (AGBG)</span>
+</nav>
+
+
+<h2>Augsburger Korpus (AGBG)</h2>
+<p><strong>Description:</strong> Description not available yet.</p>
+
+<table class="corpus-details">
+    <tr>
+        <th>Modality</th>
+        <td>spoken</td>
+    </tr>
+    <tr>
+        <th>Task Type</th>
+        <td>educational</td>
+    </tr>
+    <tr>
+        <th>Language</th>
+        <td>de</td>
+    </tr>
+    <tr>
+        <th>Size in Texts</th>
+        <td>53</td>
+    </tr>
+    <tr>
+        <th>Size in Tokens</th>
+        <td>0</td>
+    </tr>
+    <tr>
+        <th>Number of Learners</th>
+        <td>0</td>
+    </tr>
+    <tr>
+        <th>Proficiency</th>
+        <td>unknown</td>
+    </tr>
+    <tr>
+        <th>PT Stages Observed</th>
+        <td>unknown</td>
+    </tr>
+    <tr>
+        <th>Access</th>
+        <td>Unknown</td>
+    </tr>
+    <tr>
+        <th>Source</th>
+        <td><a href="https://streamlit.io" target="_blank">Source Project</a></td>
+    </tr>
+    <tr>
+        <th>PID</th>
+        <td>
+  <span class="copyable">unknown</span>
+  <button class="copy-btn" data-copy="unknown">📋</button>
+</td>
+
+    </tr>
+    <tr>
+        <th>Unique Handle</th>
+        <td>
+  <a href="#" target="_blank">View Corpus</a>
+  <button class="copy-btn" data-copy="#">📋</button>
+</td>
+
+    </tr>
+    <tr>
+        <th>Version</th>
+        <td>1.0</td>
+    </tr>
+</table>
+
+<h3>Downloads</h3>
+<ul>
+    <li><a href="/downloads/dummy_cas.zip">CAS-data</a></li>
+    <li><a href="/downloads/dummy_plain.zip">Plain Text</a></li>
+    <li><a href="/downloads/dummy_metadata.csv">Metadata (CSV)</a></li>
+    <li><a href="/downloads/dummy_source.zip">Source Format</a></li>
+</ul>
+
+
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = "✅";
+        setTimeout(() => btn.textContent = "📋", 1500);
+      });
+    });
+  });
+</script>
+
+
+    </section>
+  </div>
+
+  <footer>© DAKODA Infrastructure 2025</footer>
+
+  <script src="/js/animations.js"></script>
+  <button onclick="scrollToTop()" id="scrollTopBtn" title="Go to top">⬆️</button>
+
+  <script>
+    const scrollBtn = document.getElementById("scrollTopBtn");
+    window.onscroll = function () {
+      scrollBtn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
+    };
+
+    function scrollToTop() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+  </script>
+</body>
+</html>

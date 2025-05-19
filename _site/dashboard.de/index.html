@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard – DAKODA-Infrastruktur</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script src="/js/theme.js" defer></script>
+  <script src="/js/lang.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-content">
+  <div class="branding">
+    <img src="/css/img/logo.png" alt="DAKODA Logo" class="logo" />
+    <h1 class="site-title"><span>DAKODA</span> Infrastructure</h1>
+  </div>
+
+  <div class="header-actions">
+    <div class="search-container">
+      <input type="text" placeholder="Search..." class="search-input" />
+      <span class="search-icon">🔍</span>
+    </div>
+<div class="lang-toggle">
+  <button onclick="setLanguage('de')" class="lang-btn" id="de-btn">DE</button>
+  <button onclick="setLanguage('en')" class="lang-btn" id="en-btn">EN</button>
+</div>
+    </div>
+</div>
+
+</header>
+
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/repository/">Repository</a></li>
+        <li><a href="/dashboard/">Dashboard</a></li>
+        <li><a href="/docs/">Documentation</a></li>
+        <li><a href="/notebooks/">Notebooks</a></li>
+      </ul>
+    </aside>
+
+    <section class="main-content">
+      
+<h2>Dashboard</h2>
+<p>Im Folgenden finden Sie Werkzeuge zur Erkundung und Interaktion mit Korpora-Daten. Diese Module befinden sich derzeit in der Entwicklung und werden künftig über Streamlit-Apps bereitgestellt.</p>
+
+<div class="dashboard-grid">
+  <div class="dashboard-card">
+    <h3>Korpus-Explorer</h3>
+    <p>Erhalten Sie einen Überblick über wichtige Merkmale jedes Korpus in tabellarischer Form. Statistiken basieren auf einer CSV-Datei.</p>
+    <button class="dashboard-btn" disabled>Demnächst verfügbar</button>
+  </div>
+
+  <div class="dashboard-card">
+    <h3>Dokumentenbrowser / Datenexplorer</h3>
+    <p>Stellen Sie eine Sammlung von Dokumenten anhand von Suchkriterien zusammen, betrachten Sie die Inhalte und laden Sie Ergebnisse mit Metadaten und Statistiken herunter.</p>
+    <button class="dashboard-btn" disabled>Demnächst verfügbar</button>
+  </div>
+
+  <div class="dashboard-card">
+    <h3>Viewer für Annotationen</h3>
+    <p>Visualisieren Sie Annotationseigenschaften, z.&nbsp;B. Verbpositionen in deutschen Sätzen, anhand von CAS-Daten (.xmi) aus ZIP-Archiven.</p>
+    <button class="dashboard-btn" disabled>Demnächst verfügbar</button>
+  </div>
+</div>
+
+    </section>
+  </div>
+
+  <footer>© DAKODA Infrastructure 2025</footer>
+
+<script src="/js/animations.js"></script>
+<button onclick="scrollToTop()" id="scrollTopBtn" title="Go to top">⬆️</button>
+
+<script>
+  const scrollBtn = document.getElementById("scrollTopBtn");
+  window.onscroll = function () {
+    scrollBtn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
+  };
+
+  function scrollToTop() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, Opera
+  }
+</script>
+
+
+
+</body>
+</html>

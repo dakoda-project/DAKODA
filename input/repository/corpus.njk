@@ -1,0 +1,53 @@
+---
+layout: base.njk
+pagination:
+    data: collections.corporaPages
+    size: 1
+    alias: corpus
+permalink: "{{ corpus.fileSlug }}.{{ corpus.data.language }}.html"
+---
+
+<nav class="breadcrumbs">
+  <a href="/">Home</a> &gt; 
+  <a href="/repository/">Repository</a> &gt; 
+  <span>{{ corpus.title }}</span>
+</nav>
+
+<h2>{{ corpus.title }}</h2>
+<p><strong>Description:</strong> {{ corpus.data.description }}</p>
+
+<table class="corpus-details">
+    <tr><th>Modality</th><td>{{ corpus.data.modality }}</td></tr>
+    <tr><th>Task Type</th><td>{{ corpus.data.task_type }}</td></tr>
+    <tr><th>Language</th><td>{{ corpus.data.language }}</td></tr>
+    <tr><th>Size in Texts</th><td>{{ corpus.data.size_texts }}</td></tr>
+    <tr><th>Size in Tokens</th><td>{{ corpus.data.size_in_tokens }}</td></tr>
+    <tr><th>Number of Learners</th><td>{{ corpus.data.num_learners }}</td></tr>
+    <tr><th>Proficiency</th><td>{{ corpus.data.proficiency }}</td></tr>
+    <tr><th>PT Stages Observed</th><td>{{ corpus.data.pt_stages_observed }}</td></tr>
+    <tr><th>Access</th><td>{{ corpus.data.access }}</td></tr>
+    <tr><th>Source</th><td><a href="{{ corpus.data.source }}" target="_blank">Source Project</a></td></tr>
+    <tr><th>PID</th><td><span class="copyable">{{ corpus.data.pid }}</span> <button class="copy-btn" data-copy="{{ corpus.data.pid }}">📋</button></td></tr>
+    <tr><th>Unique Handle</th><td><a href="{{ corpus.data.unique_handle }}" target="_blank">View Corpus</a> <button class="copy-btn" data-copy="{{ corpus.data.unique_handle }}">📋</button></td></tr>
+    <tr><th>Version</th><td>{{ corpus.data.version }}</td></tr>
+</table>
+
+<h3>Downloads</h3>
+<ul>
+    <li><a href="{{ corpus.data.cas_data }}">CAS-data</a></li>
+    <li><a href="{{ corpus.data.plain_text }}">Plain Text</a></li>
+    <li><a href="{{ corpus.data.metadata_csv }}">Metadata (CSV)</a></li>
+    <li><a href="{{ corpus.data.source_format }}">Source Format</a></li>
+</ul>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = "✅";
+        setTimeout(() => btn.textContent = "📋", 1500);
+      });
+    });
+  });
+</script>

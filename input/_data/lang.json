@@ -1,0 +1,59 @@
+{
+  "welcome": {
+    "en": "Welcome to DAKODA Infrastructure",
+    "de": "Willkommen bei DAKODA Infrastruktur"
+  },
+  "explore_repository": {
+    "en": "Explore Repository",
+    "de": "Repository durchsuchen"
+  },
+  "view_dashboard": {
+    "en": "View Dashboard",
+    "de": "Dashboard anzeigen"
+  },
+  "read_docs": {
+    "en": "Read Documentation",
+    "de": "Dokumentation lesen"
+  },
+  "learn_more": {
+    "en": "Learn More About DAKODA",
+    "de": "Mehr über DAKODA erfahren"
+  }
+}
+
+
+{
+  "repository_title": {
+    "en": "Repository",
+    "de": "Datenbank"
+  },
+  "repository_description": {
+    "en": "Select corpora/datasets for download. Some datasets are restricted to authenticated users from German universities.",
+    "de": "Wählen Sie Korpora/Datasets zum Herunterladen aus. Einige Daten sind nur für authentifizierte Benutzer aus deutschen Universitäten zugänglich."
+  },
+  "authenticate": {
+    "en": "Authenticate (Demo)",
+    "de": "Authentifizieren (Demo)"
+  },
+  "search_placeholder": {
+    "en": "Search corpora...",
+    "de": "Korpora durchsuchen..."
+  },
+  "tags": {
+    "spoken": { "en": "Spoken", "de": "Gesprochen" },
+    "written": { "en": "Written", "de": "Schriftlich" },
+    "L2": { "en": "L2", "de": "L2" }
+  },
+  "table_headers": {
+    "corpus": { "en": "Corpus", "de": "Korpus" },
+    "access": { "en": "Access", "de": "Zugriff" },
+    "modality": { "en": "Modality", "de": "Modalität" },
+    "task_type": { "en": "Task Type", "de": "Aufgabentyp" },
+    "size_texts": { "en": "Size (Texts)", "de": "Größe (Texte)" },
+    "source": { "en": "Source", "de": "Quelle" },
+    "cas": { "en": "CAS-data", "de": "CAS-Daten" },
+    "plain": { "en": "Plain Text", "de": "Klartext" },
+    "metadata": { "en": "Metadata (CSV)", "de": "Metadaten (CSV)" },
+    "format": { "en": "Source Format", "de": "Quellformat" }
+  }
+}

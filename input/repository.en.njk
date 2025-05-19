@@ -1,0 +1,145 @@
+---
+layout: base.njk
+permalink: repository.en.html
+title: Repository – DAKODA Infrastructure
+data: corpora
+---
+
+<h2 class="repo-title">Repository</h2>
+<p class="repo-description">Select corpora/datasets for download. Some datasets are restricted to authenticated users from German universities.</p>
+
+<!-- Authentication Button -->
+<button class="auth-btn">Authenticate (Demo)</button>
+
+<!-- Search Bar -->
+<input type="text" id="searchInput" placeholder="Search corpora..." class="search-bar">
+
+<!-- Tag Filters -->
+<div class="tag-filters">
+  <span class="tag" data-tag="spoken">Spoken</span>
+  <span class="tag" data-tag="written">Written</span>
+  <span class="tag" data-tag="L2">L2</span>
+</div>
+
+<script>
+  const searchInput = document.getElementById('searchInput');
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    rows.forEach(row => {
+      const title = row.querySelector('td a').textContent.toLowerCase();
+      const match = title.includes(query);
+      row.style.display = query === '' || match ? '' : 'none';
+    });
+  });
+</script>
+
+
+<!-- Repository Table -->
+<table class="repo-table">
+    <thead>
+        <tr>
+            <th>Corpus</th>
+            <th>Access</th>
+            <th>Modality</th>
+            <th>Task Type</th>
+            <th>Size (Texts)</th>
+            <th>Source</th>
+            <th>CAS-data</th>
+            <th>Plain Text</th>
+            <th>Metadata (CSV)</th>
+            <th>Source Format</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for corpus in corpora %}
+        <tr>
+            <td><a href="/repository/{{ corpus.title | slugifyCorpus }}/">{{ corpus.title }}</a></td>
+            <td>{{ corpus.access }}</td>
+            <td>{{ corpus.modality }}</td>
+            <td>{{ corpus.task_type }}</td>
+            <td>{{ corpus.size_texts }}</td>
+            <td>
+                {% if corpus.source != "unknown" %}
+                    <a href="{{ corpus.source }}" target="_blank">Source</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if corpus.cas_data %}
+                    <a href="{{ corpus.cas_data }}" download>Download</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if corpus.plain_text %}
+                    <a href="{{ corpus.plain_text }}" download>Download</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if corpus.metadata_csv %}
+                    <a href="{{ corpus.metadata_csv }}" download>Download</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if corpus.source_format %}
+                    <a href="{{ corpus.source_format }}" download>Download</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<script>
+  const tags = document.querySelectorAll('.tag');
+  const rows = document.querySelectorAll('.repo-table tbody tr');
+
+  tags.forEach(tag => {
+    tag.addEventListener('click', () => {
+      const active = tag.classList.toggle('active');
+      const selectedTags = [...document.querySelectorAll('.tag.active')].map(t => t.dataset.tag);
+
+      rows.forEach(row => {
+        const rowTags = row.dataset.tags.toLowerCase();
+        const match = selectedTags.every(tag => rowTags.includes(tag.toLowerCase()));
+        row.style.display = selectedTags.length === 0 || match ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+
+
+
+<script>
+  document.querySelectorAll('.repo-table th').forEach((header, index) => {
+    header.style.cursor = 'pointer';
+    header.addEventListener('click', () => {
+      const tableBody = header.closest('table').querySelector('tbody');
+      const rowsArray = Array.from(tableBody.querySelectorAll('tr'));
+      const ascending = header.dataset.order !== "asc";
+      header.dataset.order = ascending ? "asc" : "desc";
+
+      rowsArray.sort((a, b) => {
+        const aText = a.children[index].innerText.trim();
+        const bText = b.children[index].innerText.trim();
+        return ascending 
+          ? aText.localeCompare(bText, undefined, {numeric: true})
+          : bText.localeCompare(aText, undefined, {numeric: true});
+      });
+
+      rowsArray.forEach(row => tableBody.appendChild(row));
+    });
+  });
+</script>
+
