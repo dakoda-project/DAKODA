@@ -104,7 +104,7 @@ Eleventy builds pages like `index.de.html` and `index.en.html`. The site display
 
 ## 🚀 How to Add a New Corpus, Jupyter Notebooks and Manage Downloadable Files
 
-Adding a new corpus involves placing the dataset in the appropriate directory and updating the metadata file so it appears in the repository page.
+This project uses a metadata-driven workflow powered by Eleventy to automatically display corpora on the repository page and generate individual detail pages per corpus. No need to hard-code new pages — just update a JSON file.
 ### 📂 How to Add a New Corpus to the Repository
 ### **1️⃣ Place the Corpus Data**
 1. Navigate/Create the static/data/ directory inside the project.
@@ -126,25 +126,48 @@ The metadata file (corpora.json) is stored inside the input/data/ directory. Ope
 Example metadata entry:
 ```
 {
-  "name": "Corpus A",
+  "id": "corpus-a",
+  "title": "Corpus A",
   "description": "A linguistic corpus containing text samples.",
   "access": "public",
   "files": [
     {
       "name": "Corpus A Texts",
-      "url": "/static/data/CorpusA/corpusA_texts.zip",
+      "url": "/data/CorpusA/corpusA_texts.zip",
       "format": "zip"
     },
     {
       "name": "Corpus A Metadata",
-      "url": "/static/data/CorpusA/corpusA_metadata.csv",
+      "url": "/data/CorpusA/corpusA_metadata.csv",
       "format": "csv"
     }
   ]
 }
 
 ```
+
+### ** 🔄 How the Workflow Works (Proof of Concept) **
+This is how the Eleventy-based infrastructure dynamically creates pages from your metadata:
+
+✅ Metadata File: input/data/corpora.json contains all corpus information.
+
+✅ Data Loader: A JS file (input/_data/corpora.js) reads and merges corpora.json into Eleventy's data system.
+
+✅ Repository Page: The pages repository.de.njk and repository.en.njk loop through the list of corpora and render cards/tables dynamically.
+
+✅ Corpus Detail Pages: The template input/repository/corpus.njk uses Eleventy's pagination to generate one detail page per corpus based on the metadata.
+
+✅ Output Pages: During build, Eleventy creates URLs like:
+
+```
+_site/repository/corpus-a/index.de.html
+_site/repository/corpus-a/index.en.html
+
+```
+🎯 This means you never have to manually create corpus pages — they are automatically generated and updated using metadata.
+
 🌍 Language Note: You can use language-specific corpus titles in `corpora.json`. These will be shown as-is in each language version of the repository page.
+
 
 ### 3️⃣ Update the Repository Page to Display the New Corpus
 The repository page dynamically reads from corpora.json. No extra steps are needed if the metadata is correctly formatted.
