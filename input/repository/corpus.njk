@@ -1,22 +1,30 @@
 ---
 layout: base.njk
 pagination:
-    data: collections.corporaPages
-    size: 1
-    alias: corpus
-permalink: "{{ corpus.fileSlug }}.{{ corpus.data.language }}.html"
+  data: collections.corporaPages
+  size: 1
+  alias: corpus
+permalink: "repository/{{ corpus.fileSlug | lower }}/index.{{ corpus.data.language }}.html"
 ---
+
+{% if corpus.data.language == "de" %}
+  {% set repoLink = "/repository.de.html" %}
+{% else %}
+  {% set repoLink = "/repository.en.html" %}
+{% endif %}
 
 <nav class="breadcrumbs">
   <a href="/">Home</a> &gt; 
-  <a href="/repository/">Repository</a> &gt; 
+  <a href="{{ repoLink }}">Repository</a> &gt; 
   <span>{{ corpus.title }}</span>
 </nav>
 
-<h2>{{ corpus.title }}</h2>
-<p><strong>Description:</strong> {{ corpus.data.description }}</p>
+<h1>{{ corpus.title }}</h1>
+<p class="corpus-description">{{ corpus.data.description }}</p>
 
-<table class="corpus-details">
+<div class="corpus-meta-card">
+  <h2>Corpus Metadata</h2>
+  <table class="corpus-details">
     <tr><th>Modality</th><td>{{ corpus.data.modality }}</td></tr>
     <tr><th>Task Type</th><td>{{ corpus.data.task_type }}</td></tr>
     <tr><th>Language</th><td>{{ corpus.data.language }}</td></tr>
@@ -27,18 +35,96 @@ permalink: "{{ corpus.fileSlug }}.{{ corpus.data.language }}.html"
     <tr><th>PT Stages Observed</th><td>{{ corpus.data.pt_stages_observed }}</td></tr>
     <tr><th>Access</th><td>{{ corpus.data.access }}</td></tr>
     <tr><th>Source</th><td><a href="{{ corpus.data.source }}" target="_blank">Source Project</a></td></tr>
-    <tr><th>PID</th><td><span class="copyable">{{ corpus.data.pid }}</span> <button class="copy-btn" data-copy="{{ corpus.data.pid }}">📋</button></td></tr>
-    <tr><th>Unique Handle</th><td><a href="{{ corpus.data.unique_handle }}" target="_blank">View Corpus</a> <button class="copy-btn" data-copy="{{ corpus.data.unique_handle }}">📋</button></td></tr>
+    <tr><th>PID</th><td>
+      <span class="copyable">{{ corpus.data.pid }}</span> 
+      <button class="copy-btn" data-copy="{{ corpus.data.pid }}">📋</button>
+    </td></tr>
+    <tr><th>Unique Handle</th><td>
+      <a href="{{ corpus.data.unique_handle }}" target="_blank">View Corpus</a> 
+      <button class="copy-btn" data-copy="{{ corpus.data.unique_handle }}">📋</button>
+    </td></tr>
     <tr><th>Version</th><td>{{ corpus.data.version }}</td></tr>
-</table>
+  </table>
+</div>
 
-<h3>Downloads</h3>
+<!-- ✅ Hierarchical Metadata Grouping with Dropdowns -->
+{% set groups = {
+  "Admin Information": "corpus_admin_",
+  "Design Information": "corpus_design_",
+  "Proficiency Information": "corpus_proficiency_",
+  "Project Information": "corpus_project_",
+  "Subcorpus Info": "corpus_subcorpus_",
+  "Production Setting": "productionSetting_"
+} %}
+
+{% for group, prefix in groups %}
+  {% if group == "Admin Information" or group == "Design Information" %}
+    <h2 class="metadata-heading">{{ group }}</h2>
+    <table class="metadata-table">
+      <tbody>
+        {% for key, value in corpus.data %}
+          {% if key.startsWith(prefix) %}
+            <tr>
+              <td class="meta-key">{{ key | replace(prefix, "") | replace("_", " ") }}</td>
+              <td class="meta-value">
+                {% if value is string %}
+                  {{ value }}
+                {% else %}
+                  {{ value | dump }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <details>
+      <summary><h2 class="metadata-heading">{{ group }}</h2></summary>
+      <table class="metadata-table">
+        <tbody>
+          {% for key, value in corpus.data %}
+            {% if key.startsWith(prefix) %}
+              <tr>
+                <td class="meta-key">{{ key | replace(prefix, "") | replace("_", " ") }}</td>
+                <td class="meta-value">
+                  {% if value is string %}
+                    {{ value }}
+                  {% else %}
+                    {{ value | dump }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </details>
+  {% endif %}
+{% endfor %}
+
+<div class="corpus-downloads">
+  <h2>Downloads</h2>
+  {% set corpusFolder = corpus.data.corpus_name %}
 <ul>
-    <li><a href="{{ corpus.data.cas_data }}">CAS-data</a></li>
-    <li><a href="{{ corpus.data.plain_text }}">Plain Text</a></li>
-    <li><a href="{{ corpus.data.metadata_csv }}">Metadata (CSV)</a></li>
-    <li><a href="{{ corpus.data.source_format }}">Source Format</a></li>
+  {% if corpus.data.cas_data %}
+    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.cas_data }}" download>CAS-data</a></li>
+  {% endif %}
+  {% if corpus.data.plain_text %}
+    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.plain_text }}" download>Plain Text</a></li>
+  {% endif %}
+  {% if corpus.data.metadata_csv %}
+    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.metadata_csv }}" download>Metadata (CSV)</a></li>
+  {% endif %}
+  {% if corpus.data.source_format %}
+    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.source_format }}" download>Source Format</a></li>
+  {% endif %}
 </ul>
+</div>
+
+<p>
+  <a href="{{ repoLink }}" class="back-link">← Back to Repository</a>
+</p>
 
 <script>
   document.querySelectorAll('.copy-btn').forEach(btn => {

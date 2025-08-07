@@ -1,48 +1,58 @@
 const fs = require("fs");
+const path = require("path");
 
-module.exports = function(eleventyConfig) {
+const loadCorpora = require("./input/_data/corpora.js");
+
+module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("input/css");
   eleventyConfig.addPassthroughCopy("input/css/img");
   eleventyConfig.addPassthroughCopy("input/js");
   eleventyConfig.addPassthroughCopy("input/data");
+  eleventyConfig.addPassthroughCopy({ "input/static/_redirects": "_redirects" });
 
-  eleventyConfig.addFilter("slugifyCorpus", function(value) {
+  eleventyConfig.addFilter("slugifyCorpus", function (value) {
     return value
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
       .replace(/\s+/g, "-");
   });
 
-  eleventyConfig.addLayoutAlias("base", "../_includes/layouts/base.njk");
+  eleventyConfig.addFilter("truncateTitle", function (str, maxLength = 35) {
+  if (!str || str.length <= maxLength) return str;
+  const trimmed = str.slice(0, maxLength);
+  const clean = trimmed.replace(/\s+\S*$/, "");
+  return clean + "...";
+  });
 
-  let corpora = [];
-  try {
-    const data = fs.readFileSync("input/data/corpora.json", "utf-8");
-    corpora = JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading corpora.json:", error);
-  }
+  // ✅ This alias is correct because _includes/layouts is in the root
+  eleventyConfig.addLayoutAlias("base", "layouts/base.njk");
 
-  // ✅ Only this block is modified
-  eleventyConfig.addCollection("corporaPages", function() {
-    const langs = ["de", "en"];
-    return corpora.flatMap(corpus =>
-      langs.map(lang => ({
+  const corpora = loadCorpora();
+
+  eleventyConfig.addCollection("corporaPages", function () {
+    const seen = new Set();
+
+    return corpora.map(corpus => {
+      const lang = corpus.data.language;
+      const fileSlug = corpus.fileSlug;
+      const key = `${fileSlug}--${lang}`;
+
+      if (seen.has(key)) return null;
+      seen.add(key);
+
+      return {
         title: corpus.title,
-        fileSlug: corpus.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/\s+/g, "-"),
-        data: { ...corpus, language: lang }
-      }))
-    );
+        fileSlug,
+        data: corpus.data
+      };
+    }).filter(Boolean);
   });
 
   return {
     dir: {
       input: "input",
-      includes: "../_includes",
-      layouts: "../_includes/layouts",
+      includes: "../_includes",           // ✅ FIXED: points outside input/
+      layouts: "../_includes/layouts",    // ✅ FIXED: points outside input/
       data: "data",
       output: "_site"
     },

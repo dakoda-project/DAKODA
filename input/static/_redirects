@@ -1,0 +1,15 @@
+/              /index.de.html          200
+/index         /index.de.html          200
+/index.en      /index.en.html          200
+
+/dashboard     /dashboard.de.html      200
+/dashboard.en  /dashboard.en.html      200
+
+/docs          /docs.de.html           200
+/docs.en       /docs.en.html           200
+
+/notebooks     /notebooks.de.html      200
+/notebooks.en  /notebooks.en.html      200
+
+/repository    /repository.de.html     200
+/repository.en /repository.en.html     200

@@ -22,24 +22,27 @@
           <span class="search-icon">🔍</span>
         </div>
         <div class="lang-toggle">
-          <button onclick="setLanguage('de')" class="lang-btn" id="de-btn">DE</button>
-          <button onclick="setLanguage('en')" class="lang-btn" id="en-btn">EN</button>
+          <button class="lang-btn" onclick="switchLang('de')">DE</button>
+          <button class="lang-btn" onclick="switchLang('en')">EN</button>
         </div>
       </div>
     </div>
   </header>
 
   <div class="container">
-    <aside class="sidebar">
-      <h3>Navigation</h3>
-      <ul>
-        <li><a href="/index.de.html">Home</a></li>
-        <li><a href="/repository.de.html">Repository</a></li>
-        <li><a href="/dashboard.de.html">Dashboard</a></li>
-        <li><a href="/docs.de.html">Documentation</a></li>
-        <li><a href="/notebooks.de.html">Notebooks</a></li>
-      </ul>
-    </aside>
+    <aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3>Navigation</h3>
+    <button id="toggleSidebar" title="Collapse Sidebar">⇤</button>
+  </div>
+  <ul>
+    <li><a href="/index.de.html">Home</a></li>
+    <li><a href="/repository.de.html">Repository</a></li>
+    <li><a href="/dashboard.de.html">Dashboard</a></li>
+    <li><a href="/docs.de.html">Documentation</a></li>
+    <li><a href="/notebooks.de.html">Notebooks</a></li>
+  </ul>
+</aside>
 
     <section class="main-content">
       {{ content | safe }}
@@ -47,14 +50,13 @@
   </div>
 
   <footer>
-  <div class="sponsor-footer">
-    <span>Gefördert von:</span>
-    <img src="/css/img/sponsor1.png" alt="Sponsor 1" class="sponsor-logo" />
-    <img src="/css/img/sponsor2.png" alt="Sponsor 2" class="sponsor-logo" />
-  </div>
-  <p>© DAKODA Infrastructure 2025</p>
-</footer>
-
+    <div class="sponsor-footer">
+      <span>Gefördert von:</span>
+      <img src="/css/img/sponsor1.png" alt="Sponsor 1" class="sponsor-logo" />
+      <img src="/css/img/sponsor2.png" alt="Sponsor 2" class="sponsor-logo" />
+    </div>
+    <p>© DAKODA Infrastructure 2025</p>
+  </footer>
 
   <script src="/js/animations.js"></script>
   <button onclick="scrollToTop()" id="scrollTopBtn" title="Go to top">⬆️</button>
@@ -69,6 +71,37 @@
       document.body.scrollTop = 0;
       document.documentElement.scrollTop = 0;
     }
+
+    function switchLang(targetLang) {
+      let path = window.location.pathname;
+
+      // Root fallback
+      if (path === "/" || path === "/index.html") {
+        window.location.href = `/index.${targetLang}.html`;
+        return;
+      }
+
+      // Replace the language suffix
+      const newPath = path.replace(/(de|en)\.html$/, `${targetLang}.html`);
+
+      if (newPath === path) {
+        // fallback if no lang-specific file found
+        window.location.href = `/index.${targetLang}.html`;
+      } else {
+        window.location.href = newPath;
+      }
+    }
   </script>
+
+<script>
+  const sidebar = document.getElementById("sidebar");
+  const toggleBtn = document.getElementById("toggleSidebar");
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+    toggleBtn.textContent = sidebar.classList.contains("collapsed") ? "⯈" : "⇤";
+  });
+</script>
+
 </body>
 </html>
