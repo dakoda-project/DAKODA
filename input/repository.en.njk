@@ -16,10 +16,11 @@ title: Repository – DAKODA Infrastructure
 <input type="text" id="searchInput" placeholder="Search corpora..." class="search-bar">
 
 <!-- Enhanced Filter Bar -->
+<!-- Enhanced Filter Bar -->
 <div class="filter-bar-enhanced">
   <div class="filter-group-enhanced">
     <div class="filter-item">
-      <label for="accessFilter">Zugriff:</label>
+      <label for="accessFilter">Zugang:</label>
       <select id="accessFilter" onchange="filterTable()">
         <option value="all">Alle</option>
         <option value="open">Open</option>
@@ -30,7 +31,7 @@ title: Repository – DAKODA Infrastructure
     </div>
 
     <div class="filter-item">
-      <label for="l1Filter">L1:</label>
+      <label for="l1Filter">Erstsprachenkonstellation:</label>
       <select id="l1Filter" onchange="filterTable()">
         <option value="all">Alle</option>
         <option value="mono">Mono</option>
@@ -46,90 +47,384 @@ title: Repository – DAKODA Infrastructure
         <option value="spoken">Spoken</option>
       </select>
     </div>
+
+    <!-- GER (CEFR) – grouped under one label) -->
+    <div class="filter-item ger">
+      <label class="ger-label">GER:</label>
+      <div class="ger-row">
+        <div class="ger-field">
+          <label for="gerMinFilter" class="sublabel">Min</label>
+          <select id="gerMinFilter" onchange="filterTable()">
+            <option value="all">Alle</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+          </select>
+        </div>
+        <div class="ger-field">
+          <label for="gerMaxFilter" class="sublabel">Max</label>
+          <select id="gerMaxFilter" onchange="filterTable()">
+            <option value="all">Alle</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- end GER -->
   </div>
 </div>
+
+
+
+<!-- Legend -->
+<div class="repo-legend">
+  <span class="legend-title">Legende:</span>
+  <span class="legend-item"><span class="legend-swatch open"></span> open</span>
+  <span class="legend-item"><span class="legend-swatch closed"></span> closed</span>
+  <span class="legend-item"><span class="legend-swatch restricted"></span> restricted</span>
+  <span class="legend-item"><span class="legend-swatch special"></span> special restrictions</span>
+</div>
+
+
 
 {% set tableKeys = [
   "corpus_admin_name",
   "corpus_subcorpus_signet",
-  "corpus_admin_acronym",
   "corpus_admin_availability",
   "corpus_design_l1Type",
-  "corpus_proficiency_levelMax",
-  "corpus_proficiency_levelMin",
+  "corpus_proficiency_level",
   "corpus_subcorpus_sizeLearners",
-  "task_interaction_mode",
-  "ANNOTATION"
+  "task_interaction_mode"
 ] %}
 
 <!-- Repository Table -->
 <table class="repo-table">
-  <thead>
-    <tr>
-      {% for key in tableKeys %}
+<thead>
+  <tr>
+    {% for key in tableKeys %}
+      {% if key == "corpus_admin_name" %}
         {% set display = displaynames[key] or key %}
-        <th title="{{ key }}">{{ display | truncate(35, true, '...') }}</th>
-      {% endfor %}
-      <th>Download</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for corpus in collections.corporaPages %}
-      {% if corpus.data.language == "en" %}
-      <tr>
-        {% for key in tableKeys %}
-          {% if key == "corpus_admin_name" %}
-            <td class="
-              {% if corpus.data.corpus_admin_availability == 'open' %}access-open
-              {% elif corpus.data.corpus_admin_availability == 'closed' %}access-closed
-              {% elif corpus.data.corpus_admin_availability == 'restricted' %}access-restricted
-              {% elif corpus.data.corpus_admin_availability == 'special restrictions' %}access-special
-              {% endif %}">
-              <a href="/repository/{{ corpus.fileSlug }}/index.en.html" title="{{ corpus.title }}">
-               {{ corpus.title | truncateTitle(35) }}
-              </a>
-            </td>
-          {% elif key == "ANNOTATION" %}
-            <td><!-- Annotation --></td>
-          {% else %}
-            <td>{{ corpus.data[key] or "" }}</td>
-          {% endif %}
-        {% endfor %}
-        <td>
-          <div class="dropdown">
-            <button class="dropdown-btn">📥</button>
-            <div class="dropdown-content">
-              <a href="/data/{{ corpus.fileSlug }}/corpus.zip">ZIP</a>
-              <a href="/data/{{ corpus.fileSlug }}/corpus.xlsx">Excel</a>
-              <a href="/data/{{ corpus.fileSlug }}/corpus.txt">Text</a>
-              <a href="/data/{{ corpus.fileSlug }}/corpus.xmi">XMI</a>
-            </div>
-          </div>
-        </td>
-      </tr>
+        <th rowspan="2" class="sortable" data-sort-key="title" title="{{ key }}">
+          {{ display | truncate(35, true, '...') }}
+          <span class="sort-icon">↕</span>
+        </th>
+        <th rowspan="2">Download</th> {# <-- stays here #}
+
+{% elif key == "corpus_proficiency_level" %}
+  <th colspan="2">Kompetenzniveau</th>
+
+
+
+
+      {% elif key == "corpus_admin_availability" %}
+        {% set display = displaynames[key] or key %}
+        <th rowspan="2" class="sortable" data-sort-key="availability" title="{{ key }}">
+          {{ display | truncate(35, true, '...') }}
+          <span class="sort-icon">↕</span>
+        </th>
+
+      {% elif key == "corpus_design_l1Type" %}
+        {% set display = displaynames[key] or key %}
+        <th rowspan="2" class="sortable" data-sort-key="l1type" title="{{ key }}">
+          {{ display | truncate(35, true, '...') }}
+          <span class="sort-icon">↕</span>
+        </th>
+
+      {% elif key == "task_interaction_mode" %}
+        {% set display = displaynames[key] or key %}
+        <th rowspan="2" class="sortable" data-sort-key="modality" title="{{ key }}">
+          {{ display | truncate(35, true, '...') }}
+          <span class="sort-icon">↕</span>
+        </th>
+
+      {% else %}
+        {% set display = displaynames[key] or key %}
+        <th rowspan="2" title="{{ key }}">
+          {{ display | truncate(35, true, '...') }}
+        </th>
       {% endif %}
     {% endfor %}
-  </tbody>
+  </tr>
+
+  <tr>
+    {% for key in tableKeys %}
+      {% if key == "corpus_admin_name" %}
+        <th style="display:none;"></th> {# hidden subrow for download #}
+{% elif key == "corpus_proficiency_level" %}
+  <th class="sortable" data-sort-key="cefr-min">
+    Min <span class="sort-icon">↕</span>
+  </th>
+  <th class="sortable" data-sort-key="cefr-max">
+    Max <span class="sort-icon">↕</span>
+  </th>
+
+      {% endif %}
+    {% endfor %}
+  </tr>
+</thead>
+
+
+<tbody id="repo-body">
+  {% for corpus in collections.corporaPages %}
+    {% if corpus.data.language == "de" %}
+    <tr
+  data-index="{{ loop.index0 }}"
+  data-title="{{ corpus.data.corpus_admin_name | escape }}"
+  data-acronym="{{ (corpus.data.corpus_admin_acronym or corpus.data.corpus_subcorpus_signet or corpus.fileSlug) | escape }}"
+  data-availability="{{ corpus.data.corpus_admin_availability | lower | trim }}"
+  data-l1type="{{ corpus.data.corpus_design_l1Type | lower | trim }}"
+  data-modality="{{ corpus.data.task_interaction_mode | lower | trim }}"
+  data-cefr-min="{{ corpus.data.corpus_proficiency_levelMin | upper | trim }}"
+  data-cefr-max="{{ corpus.data.corpus_proficiency_levelMax | upper | trim }}"
+    >
+      {% for key in tableKeys %}
+        {% if key == "corpus_admin_name" %}
+          <td class="
+            {% if corpus.data.corpus_admin_availability == 'open' %}access-open
+            {% elif corpus.data.corpus_admin_availability == 'closed' %}access-closed
+            {% elif corpus.data.corpus_admin_availability == 'restricted' %}access-restricted
+            {% elif corpus.data.corpus_admin_availability == 'special restrictions' %}access-special
+            {% endif %}">
+            <a href="/repository/{{ corpus.fileSlug }}/index.de.html" title="{{ corpus.data.corpus_admin_name }}">
+              {{ corpus.data.corpus_admin_acronym or corpus.data.corpus_admin_name | truncateTitle(35) }}
+            </a>
+          </td>
+
+          <td>
+            {% set access = corpus.data.corpus_admin_availability | lower %}
+            {% if access == "open" %}
+              <div class="dropdown">
+                <button class="dropdown-btn">📥</button>
+                <div class="dropdown-content">
+                  <a href="/data/{{ corpus.fileSlug }}/corpus.zip">ZIP</a>
+                  <a href="/data/{{ corpus.fileSlug }}/corpus.xlsx">Excel</a>
+                  <a href="/data/{{ corpus.fileSlug }}/corpus.txt">Text</a>
+                  <a href="/data/{{ corpus.fileSlug }}/corpus.xmi">XMI</a>
+                </div>
+              </div>
+            {% elif access == "closed" %}
+              <div class="dropdown disabled">
+                <button class="dropdown-btn disabled-btn" disabled title="Download nicht verfügbar">📥</button>
+                <div class="dropdown-content disabled-content">
+                  <span>ZIP</span>
+                  <span>Excel</span>
+                  <span>Text</span>
+                  <span>XMI</span>
+                </div>
+              </div>
+            {% else %}
+              <!-- Hide download for restricted/special restrictions -->
+              <span class="download-blocked"></span>
+            {% endif %}
+          </td>
+
+        {% elif key == "corpus_proficiency_level" %}
+          <td>{{ corpus.data.corpus_proficiency_levelMin or "" }}</td>
+          <td>{{ corpus.data.corpus_proficiency_levelMax or "" }}</td>
+
+        {% elif key == "ANNOTATION" %}
+          <td><!-- Annotationen --></td>
+
+        {% else %}
+          <td>{{ corpus.data[key] or "" }}</td>
+        {% endif %}
+      {% endfor %}
+    </tr>
+    {% endif %}
+  {% endfor %}
+</tbody>
 </table>
 
 <script>
 function filterTable() {
-  const access = document.getElementById("accessFilter").value.toLowerCase();
-  const l1 = document.getElementById("l1Filter").value.toLowerCase();
-  const modality = document.getElementById("modalityFilter").value.toLowerCase();
+  const access   = (document.getElementById("accessFilter")?.value || "all").toLowerCase();
+  const l1       = (document.getElementById("l1Filter")?.value || "all").toLowerCase();
+  const modality = (document.getElementById("modalityFilter")?.value || "all").toLowerCase();
+  const gerMin   = (document.getElementById("gerMinFilter")?.value || "all").toUpperCase();
+  const gerMax   = (document.getElementById("gerMaxFilter")?.value || "all").toUpperCase();
 
-  const rows = document.querySelectorAll(".repo-table tbody tr");
+  const CEFR = ['A1','A2','B1','B2','C1','C2'];
+  const rxCEFR = /(A1|A2|B1|B2|C1|C2)/i;
 
+  function idx(val) {
+    if (!val) return -1;
+    const m = String(val).match(rxCEFR);
+    return m ? CEFR.indexOf(m[1].toUpperCase()) : -1;
+  }
+
+  let minBound = gerMin === 'ALL' ? -Infinity : CEFR.indexOf(gerMin);
+  let maxBound = gerMax === 'ALL' ?  Infinity : CEFR.indexOf(gerMax);
+  if (Number.isFinite(minBound) && Number.isFinite(maxBound) && minBound > maxBound) {
+    // swap if user chose Min > Max
+    const t = minBound; minBound = maxBound; maxBound = t;
+  }
+
+  const rows = document.querySelectorAll("#repo-body tr");
   rows.forEach(row => {
-    const accessText = row.children[3].textContent.trim().toLowerCase();
-    const l1Text = row.children[4].textContent.trim().toLowerCase();
-    const modalityText = row.children[8].textContent.trim().toLowerCase();
+    const rAccess = (row.dataset.availability || "").toLowerCase();
+    const rL1     = (row.dataset.l1type || "").toLowerCase();
+    const rMod    = (row.dataset.modality || "").toLowerCase();
 
-    const accessMatch = access === "all" || accessText === access;
-    const l1Match = l1 === "all" || l1Text === l1;
-    const modalityMatch = modality === "all" || modalityText === modality;
+    // Extract CEFR indices even if text contains extra words
+    const rMinIdx = idx(row.dataset.cefrMin);
+    const rMaxIdx = idx(row.dataset.cefrMax);
 
-    row.style.display = (accessMatch && l1Match && modalityMatch) ? "" : "none";
+    const accOK = access === "all" || rAccess === access;
+    const l1OK  = l1 === "all" || rL1 === l1;
+    const modOK = modality === "all" || rMod === modality;
+
+    const anyGerSelected = (gerMin !== 'ALL') || (gerMax !== 'ALL');
+    let gerOK = true;
+    if (anyGerSelected) {
+      if (rMinIdx === -1 && rMaxIdx === -1) {
+        // no CEFR info → hide when user applied GER filter
+        gerOK = false;
+      } else {
+        const rowMin = (rMinIdx === -1) ? -Infinity : rMinIdx;
+        const rowMax = (rMaxIdx === -1) ?  Infinity : rMaxIdx;
+        gerOK = rowMin >= minBound && rowMax <= maxBound;
+      }
+    }
+
+    row.style.display = (accOK && l1OK && modOK && gerOK) ? "" : "none";
   });
 }
+
+// Optional: apply current filters on load (e.g., if values are preselected)
+window.addEventListener("DOMContentLoaded", () => {
+  filterTable();
+});
+</script>
+
+
+
+
+
+
+<script>
+(function () {
+  const tbody = document.getElementById('repo-body');
+  if (!tbody) return;
+
+  const ORDER = {
+    availability: ['open', 'closed', 'restricted', 'special restrictions'],
+    l1type: ['mono', 'multi'],
+    modality: ['written', 'spoken', 'spoken; written'],
+    cefr: ['A1','A2','B1','B2','C1','C2']
+  };
+
+  // Cache rows and remember original order
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.forEach((r, i) => {
+    if (!r.dataset.index) r.dataset.index = i; // fallback if not set server-side
+  });
+
+  const ths = document.querySelectorAll('th.sortable');
+
+  ths.forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sortKey;
+
+      // 3-state cycle: none -> asc -> desc -> none
+      const isAsc  = th.classList.contains('asc');
+      const isDesc = th.classList.contains('desc');
+
+      ths.forEach(t => t.classList.remove('asc','desc')); // clear all
+
+      if (!isAsc && !isDesc) {
+        th.classList.add('asc');
+        sortAndRender(key, 'asc');
+      } else if (isAsc) {
+        th.classList.add('desc');
+        sortAndRender(key, 'desc');
+      } else {
+        // reset to original
+        updateIcons();
+        const restored = rows.slice().sort((a,b) => (+a.dataset.index) - (+b.dataset.index));
+        restored.forEach(r => tbody.appendChild(r));
+        return;
+      }
+
+      updateIcons();
+    });
+  });
+
+  function updateIcons() {
+    ths.forEach(th => {
+      const icon = th.querySelector('.sort-icon');
+      if (!icon) return;
+      if (th.classList.contains('asc')) icon.textContent = '▲';
+      else if (th.classList.contains('desc')) icon.textContent = '▼';
+      else icon.textContent = '↕';
+    });
+  }
+
+  function sortAndRender(key, dir) {
+    const sorted = rows.slice().sort((a, b) => cmp(a, b, key, dir));
+    sorted.forEach(r => tbody.appendChild(r));
+  }
+
+  function cmp(a, b, key, dir) {
+    let c = 0;
+    switch (key) {
+      case 'title': {
+        // sort by acronym first; fallback to full title
+        const av = (a.dataset.acronym || a.dataset.title || '').toLowerCase();
+        const bv = (b.dataset.acronym || b.dataset.title || '').toLowerCase();
+        c = av.localeCompare(bv, undefined, {sensitivity:'base'});
+        break;
+      }
+      case 'availability':
+        c = orderCompare(a.dataset.availability, b.dataset.availability, ORDER.availability);
+        break;
+
+      case 'l1type':
+        c = orderCompare(a.dataset.l1type, b.dataset.l1type, ORDER.l1type);
+        break;
+
+      case 'modality':
+        c = orderCompare(a.dataset.modality, b.dataset.modality, ORDER.modality);
+        break;
+
+      case 'cefr-min':
+        c = cefrCompare(a.dataset.cefrMin, b.dataset.cefrMin);
+        break;
+
+      case 'cefr-max':
+        c = cefrCompare(a.dataset.cefrMax, b.dataset.cefrMax);
+        break;
+
+      default: {
+        const av = (a.dataset.title || '').toLowerCase();
+        const bv = (b.dataset.title || '').toLowerCase();
+        c = av.localeCompare(bv, undefined, {sensitivity:'base'});
+      }
+    }
+    return dir === 'asc' ? c : -c;
+  }
+
+  function orderCompare(a, b, order) {
+    const ai = orderIndex(a, order), bi = orderIndex(b, order);
+    return ai - bi;
+  }
+  function orderIndex(v, order) {
+    v = (v || '').toLowerCase().trim();
+    const i = order.indexOf(v);
+    return i === -1 ? Number.POSITIVE_INFINITY : i;
+  }
+  function cefrCompare(a, b) {
+    const CEFR = ORDER.cefr;
+    const ai = CEFR.indexOf((a||'').toUpperCase().trim());
+    const bi = CEFR.indexOf((b||'').toUpperCase().trim());
+    return (ai === -1 ? Number.POSITIVE_INFINITY : ai) - (bi === -1 ? Number.POSITIVE_INFINITY : bi);
+  }
+})();
 </script>
