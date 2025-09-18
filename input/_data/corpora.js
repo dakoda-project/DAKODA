@@ -9,6 +9,31 @@ function generateSlug(title) {
     .replace(/^-+|-+$/g, "");
 }
 
+// --- NEW helpers (for XML schema compatibility) -----------------
+function emptyish(v) {
+  if (v === null || v === undefined) return true;
+  const s = String(v).trim();
+  return (
+    !s ||
+    /^jr$/i.test(s) ||
+    /^not\s*available$/i.test(s) ||
+    s === "#" ||
+    s.toLowerCase() === "null"
+  );
+}
+function pick(obj, ...keys) {
+  for (const k of keys) {
+    if (obj && !emptyish(obj[k])) return obj[k];
+  }
+  return undefined;
+}
+function pickCEFR(val) {
+  if (emptyish(val)) return undefined;
+  const m = String(val).toUpperCase().match(/A1|A2|B1|B2|C1|C2/);
+  return m ? m[0] : undefined;
+}
+// ----------------------------------------------------------------
+
 // ✅ Add this helper to check the folder for download files
 function detectDownloads(corpusFolderName) {
   const folderPath = path.join(__dirname, "../data", corpusFolderName);
@@ -47,32 +72,73 @@ module.exports = () => {
       const parsed = JSON.parse(wrapped).corpora;
 
       for (const meta of parsed) {
-        if (!meta.corpus_admin_name) continue;
+        // --- CHANGED: title can be corpus_admin_name (old) or corpus_name (new)
+        const title = pick(meta, "corpus_admin_name", "corpus_name");
+        if (emptyish(title)) continue;
 
-        const title = meta.corpus_admin_name;
         const slug = generateSlug(title);
 
+        // --- NEW: normalize availability and SRC link for new schema keys
+        const availability = pick(meta, "corpus_admin_availability", "corpus_admin_access");
+        const srcUrl = pick(meta, "corpus_admin_URLdownload", "corpus_admin_url_download");
+
+        // --- NEW: support list modality in new schema; join if array
+        let modalityRaw = pick(meta, "task_interaction_mode", "modality");
+        let modality = "";
+        if (Array.isArray(modalityRaw)) {
+          const norm = modalityRaw
+            .map(v => String(v || "").toLowerCase())
+            .filter(Boolean);
+          modality = Array.from(new Set(norm)).join("; ");
+        } else {
+          modality = String(modalityRaw || "");
+        }
+
+        // --- NEW: CEFR min/max fallback from single level
+        let cefrMin = pick(meta, "corpus_proficiency_levelMin", "corpus_proficiency_level_min");
+        let cefrMax = pick(meta, "corpus_proficiency_levelMax", "corpus_proficiency_level_max");
+        const singleLevel = pick(meta, "corpus_proficiency_level", "corpus_proficiencyLevel");
+        if (emptyish(cefrMin) && emptyish(cefrMax) && !emptyish(singleLevel)) {
+          const one = pickCEFR(singleLevel);
+          cefrMin = one;
+          cefrMax = one;
+        }
+
+        // --- NEW: sizes under old/new keys (used for "Speakers / texts")
+        const sizeTexts    = pick(meta, "corpus_subcorpus_sizeTexts", "corpus_subcorpus_size_texts", "texts");
+        const sizeTokens   = pick(meta, "corpus_subcorpus_sizeTokens", "corpus_subcorpus_size_tokens", "tokens");
+        const sizeLearners = pick(meta, "corpus_subcorpus_sizeLearners", "corpus_subcorpus_size_learners", "speakers");
+
+        // keep your old fields too, but prefer normalized ones above
         for (const lang of ["de", "en"]) {
           corpora.push({
             title,
             fileSlug: slug,
             language: lang,
             data: {
-              ...meta,
+              ...meta,                      // keep original fields available
               language: lang,
               fileSlug: slug,
-              modality: meta.task_interaction_mode || "",
+
+              // your existing derived fields (preserve names)
+              modality: modality || "",
               task_type: meta.task_type || "",
-              size_texts: meta.corpus_subcorpus_sizeTexts || "",
-              size_in_tokens: meta.corpus_subcorpus_sizeTokens || "",
-              num_learners: meta.corpus_subcorpus_sizeLearners || "",
-              proficiency: meta.corpus_proficiency_levelMax || "",
+              size_texts: sizeTexts || "",
+              size_in_tokens: sizeTokens || "",
+              num_learners: sizeLearners || "",
+              proficiency: pick(meta, "corpus_proficiency_levelMax", "corpus_proficiency_level_max") || "",
               pt_stages_observed: meta.pt_stages_observed || "",
-              access: meta.corpus_admin_availability || "",
-              source: meta.corpus_admin_URLdownload || "",
-              pid: meta.corpus_admin_pid_dkd || "",
-              unique_handle: meta.corpus_admin_URLquery || "",
-              version: meta.corpus_admin_version_orig || "",
+              access: availability || "",
+              source: srcUrl || "",
+              pid: pick(meta, "corpus_admin_pid_dkd", "corpus_admin_pid") || "",
+              unique_handle: pick(meta, "corpus_admin_URLquery", "corpus_admin_url_query") || "",
+              version: pick(meta, "corpus_admin_version_orig", "corpus_admin_version") || "",
+
+              // ensure templates always have these (even if only single level is present)
+              corpus_proficiency_levelMin: cefrMin || meta.corpus_proficiency_levelMin || "",
+              corpus_proficiency_levelMax: cefrMax || meta.corpus_proficiency_levelMax || "",
+
+              // keep original download detection
               ...detectDownloads(meta.corpus_name || slug)  // ✅ Inject detected downloads
             }
           });
