@@ -10,7 +10,7 @@ title: Repositorium – DAKODA Infrastruktur
 </p>
 
 <!-- Authentication Button -->
-<button class="auth-btn">Authentifizieren (Demo)</button>
+<button class="auth-btn">Authentifizieren</button>
 
 <!-- Search Bar -->
 <input type="text" id="searchInput" placeholder="Korpora durchsuchen..." class="search-bar">
@@ -31,7 +31,7 @@ title: Repositorium – DAKODA Infrastruktur
     </div>
 
     <div class="filter-item">
-      <label for="l1Filter">Erstsprachenkonstellation:</label>
+      <label for="l1Filter">L1 der Lernenden:</label>
       <select id="l1Filter" onchange="filterTable()">
         <option value="all">Alle</option>
         <option value="mono">Mono</option>
@@ -101,7 +101,7 @@ title: Repositorium – DAKODA Infrastruktur
   "corpus_admin_availability",
   "corpus_design_l1Type",
   "corpus_proficiency_level",
-  "corpus_subcorpus_sizeLearners",
+  "speakers_texts",
   "task_interaction_mode"
 ] %}
 
@@ -111,31 +111,36 @@ title: Repositorium – DAKODA Infrastruktur
   <tr>
     {% for key in tableKeys %}
       {% if key == "corpus_admin_name" %}
-        {% set display = displaynames[key] or key %}
+       
         <th rowspan="2" class="sortable" data-sort-key="title" title="{{ key }}">
           {{ display | truncate(35, true, '...') }}
-          <span class="sort-icon">↕</span>
+          Korpustitel <span class="sort-icon">↕</span>
         </th>
-        <th rowspan="2">Download</th> {# <-- stays here #}
+        {# CHANGED: split Download into two subcolumns #}
+        <th colspan="2">Download</th>
 
-{% elif key == "corpus_proficiency_level" %}
-  <th colspan="2">Kompetenzniveau</th>
-
-
+      {% elif key == "corpus_subcorpus_signet" %}
+        {# CHANGED: rename Siegel... -> ID #}
+        <th rowspan="2" title="{{ key }}">ID</th>
 
       {% elif key == "corpus_admin_availability" %}
-        {% set display = displaynames[key] or key %}
+        {# CHANGED: force label to Zugang #}
         <th rowspan="2" class="sortable" data-sort-key="availability" title="{{ key }}">
-          {{ display | truncate(35, true, '...') }}
-          <span class="sort-icon">↕</span>
+          Zugang <span class="sort-icon">↕</span>
         </th>
 
       {% elif key == "corpus_design_l1Type" %}
-        {% set display = displaynames[key] or key %}
+        {# CHANGED: force label to L1 der Lernenden #}
         <th rowspan="2" class="sortable" data-sort-key="l1type" title="{{ key }}">
-          {{ display | truncate(35, true, '...') }}
-          <span class="sort-icon">↕</span>
+          L1 der Lernenden <span class="sort-icon">↕</span>
         </th>
+
+      {% elif key == "corpus_proficiency_level" %}
+        <th colspan="2">Kompetenzniveau</th>
+
+{% elif key == "speakers_texts" %}
+  <th rowspan="2">Sprecher / Texte</th>
+
 
       {% elif key == "task_interaction_mode" %}
         {% set display = displaynames[key] or key %}
@@ -156,15 +161,16 @@ title: Repositorium – DAKODA Infrastruktur
   <tr>
     {% for key in tableKeys %}
       {% if key == "corpus_admin_name" %}
-        <th style="display:none;"></th> {# hidden subrow for download #}
-{% elif key == "corpus_proficiency_level" %}
-  <th class="sortable" data-sort-key="cefr-min">
-    Min <span class="sort-icon">↕</span>
-  </th>
-  <th class="sortable" data-sort-key="cefr-max">
-    Max <span class="sort-icon">↕</span>
-  </th>
-
+        {# CHANGED: DKD + SRC headers #}
+        <th>DKD</th>
+        <th>SRC</th>
+      {% elif key == "corpus_proficiency_level" %}
+        <th class="sortable" data-sort-key="cefr-min">
+          Min <span class="sort-icon">↕</span>
+        </th>
+        <th class="sortable" data-sort-key="cefr-max">
+          Max <span class="sort-icon">↕</span>
+        </th>
       {% endif %}
     {% endfor %}
   </tr>
@@ -172,6 +178,7 @@ title: Repositorium – DAKODA Infrastruktur
 
 
 <tbody id="repo-body">
+  {# keep all corpora; do not filter them out #}
   {% for corpus in collections.corporaPages %}
     {% if corpus.data.language == "de" %}
     <tr
@@ -179,10 +186,10 @@ title: Repositorium – DAKODA Infrastruktur
   data-title="{{ corpus.data.corpus_admin_name | escape }}"
   data-acronym="{{ (corpus.data.corpus_admin_acronym or corpus.data.corpus_subcorpus_signet or corpus.fileSlug) | escape }}"
   data-availability="{{ corpus.data.corpus_admin_availability | lower | trim }}"
-  data-l1type="{{ corpus.data.corpus_design_l1Type | lower | trim }}"
-  data-modality="{{ corpus.data.task_interaction_mode | lower | trim }}"
-  data-cefr-min="{{ corpus.data.corpus_proficiency_levelMin | upper | trim }}"
-  data-cefr-max="{{ corpus.data.corpus_proficiency_levelMax | upper | trim }}"
+  data-l1type="{{ corpus.data.corpus_design_l1Type | emptyIfJR | lower | trim }}"
+  data-modality="{{ corpus.data.task_interaction_mode | emptyIfJR | lower | trim }}"
+  data-cefr-min="{{ corpus.data.corpus_proficiency_levelMin | emptyIfJR | upper | trim }}"
+  data-cefr-max="{{ corpus.data.corpus_proficiency_levelMax | emptyIfJR | upper | trim }}"
     >
       {% for key in tableKeys %}
         {% if key == "corpus_admin_name" %}
@@ -197,43 +204,90 @@ title: Repositorium – DAKODA Infrastruktur
             </a>
           </td>
 
+          {# CHANGED: DKD (left) #}
           <td>
             {% set access = corpus.data.corpus_admin_availability | lower %}
-            {% if access == "open" %}
+            {% set cas = corpus.data.cas_data %}
+            {% set txt = corpus.data.plain_text %}
+            {% set meta = corpus.data.metadata_csv %}
+            {% set hasDkd = cas or txt or meta %}
+
+            {% if access == "open" and hasDkd %}
               <div class="dropdown">
-                <button class="dropdown-btn">📥</button>
+                <button class="dropdown-btn">⤓</button>
                 <div class="dropdown-content">
-                  <a href="/data/{{ corpus.fileSlug }}/corpus.zip">ZIP</a>
-                  <a href="/data/{{ corpus.fileSlug }}/corpus.xlsx">Excel</a>
-                  <a href="/data/{{ corpus.fileSlug }}/corpus.txt">Text</a>
-                  <a href="/data/{{ corpus.fileSlug }}/corpus.xmi">XMI</a>
-                </div>
-              </div>
-            {% elif access == "closed" %}
-              <div class="dropdown disabled">
-                <button class="dropdown-btn disabled-btn" disabled title="Download nicht verfügbar">📥</button>
-                <div class="dropdown-content disabled-content">
-                  <span>ZIP</span>
-                  <span>Excel</span>
-                  <span>Text</span>
-                  <span>XMI</span>
+                  {% if meta %}
+                    {% if meta | lower | endswith(".xlsx") %}
+                      <a href="/data/{{ corpus.fileSlug }}/{{ meta }}">Excel</a>
+                    {% else %}
+                      <a href="/data/{{ corpus.fileSlug }}/{{ meta }}">CSV</a>
+                    {% endif %}
+                  {% endif %}
+                  {% if txt %}
+                    <a href="/data/{{ corpus.fileSlug }}/{{ txt }}">Text</a>
+                  {% endif %}
+                  {% if cas %}
+                    <a href="/data/{{ corpus.fileSlug }}/{{ cas }}">XMI</a>
+                  {% endif %}
                 </div>
               </div>
             {% else %}
-              <!-- Hide download for restricted/special restrictions -->
-              <span class="download-blocked"></span>
+              <span>Not available</span>
             {% endif %}
           </td>
 
+
+
+          {# CHANGED: SRC (right) #}
+          <td>
+            {% set access = corpus.data.corpus_admin_availability | lower %}
+            {% set srcRaw = corpus.data.source %}
+            {% set src = srcRaw | emptyIfJR %}
+            {% if access == "open" and src %}
+              <a href="{{ src }}" target="_blank" rel="noopener">Link</a>
+            {% else %}
+              <span>Not available</span>
+            {% endif %}
+          </td>
+
+
+
+{% elif key == "speakers_texts" %}
+  {% set sp = corpus.data.corpus_subcorpus_sizeLearners | jrLabel %}
+  {% set tx = corpus.data.corpus_subcorpus_sizeTexts   | jrLabel %}
+  <td>
+    {% if sp != 'Not available' or tx != 'Not available' %}
+      {% if sp != 'Not available' %}{{ sp }}{% else %}Not available{% endif %}
+      {% if sp != 'Not available' and tx != 'Not available' %}/{% endif %}
+      {% if tx != 'Not available' %}{{ tx }}{% endif %}
+    {% else %}
+      Not available
+    {% endif %}
+  </td>
+
+
+
         {% elif key == "corpus_proficiency_level" %}
-          <td>{{ corpus.data.corpus_proficiency_levelMin or "" }}</td>
-          <td>{{ corpus.data.corpus_proficiency_levelMax or "" }}</td>
+          <td>{{ corpus.data.corpus_proficiency_levelMin | jrLabel }}</td>
+          <td>{{ corpus.data.corpus_proficiency_levelMax | jrLabel }}</td>
 
         {% elif key == "ANNOTATION" %}
           <td><!-- Annotationen --></td>
 
+        {% elif key == "corpus_admin_availability" %}
+          <td>{{ corpus.data[key] | cleanJR }}</td>
+
+        {% elif key == "corpus_design_l1Type" %}
+          <td>{{ corpus.data[key] | cleanJR }}</td>
+
+        {% elif key == "task_interaction_mode" %}
+          <td>{{ corpus.data[key] | cleanJR }}</td>
+
+        {% elif key == "corpus_subcorpus_signet" %}
+          <td>{{ corpus.data[key] | cleanJR }}</td>
+
         {% else %}
-          <td>{{ corpus.data[key] or "" }}</td>
+          <td>{{ corpus.data[key] | cleanJR }}</td>
         {% endif %}
       {% endfor %}
     </tr>

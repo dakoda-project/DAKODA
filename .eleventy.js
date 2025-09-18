@@ -1,3 +1,4 @@
+// .eleventy.js
 const fs = require("fs");
 const path = require("path");
 
@@ -18,10 +19,58 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.addFilter("truncateTitle", function (str, maxLength = 35) {
-  if (!str || str.length <= maxLength) return str;
-  const trimmed = str.slice(0, maxLength);
-  const clean = trimmed.replace(/\s+\S*$/, "");
-  return clean + "...";
+    if (!str || str.length <= maxLength) return str;
+    const trimmed = str.slice(0, maxLength);
+    const clean = trimmed.replace(/\s+\S*$/, "");
+    return clean + "...";
+  });
+
+  // NEW: jrLabel -> show "Not available" for placeholder values (used in templates)
+  eleventyConfig.addFilter("jrLabel", function (value) {
+    const v = (value ?? "").toString().trim();
+    if (
+      !v ||
+      v === "#" ||
+      /^jr\b/i.test(v) ||
+      /^jr\s*:/i.test(v) ||
+      /^not\s*available$/i.test(v) ||
+      v.toLowerCase() === "null"
+    ) {
+      return "Not available";
+    }
+    return v;
+  });
+
+  // NEW: show "Not available" for placeholder values like JR/#/null
+  eleventyConfig.addFilter("cleanJR", function (val) {
+    if (val === null || val === undefined) return "Not available";
+    const s = String(val).trim();
+    if (
+      !s ||
+      /^jr$/i.test(s) ||
+      /^not\s*available$/i.test(s) ||
+      s === "#" ||
+      s.toLowerCase() === "null"
+    ) {
+      return "Not available";
+    }
+    return s;
+  });
+
+  // NEW: blank out placeholder values when used in data-* attributes
+  eleventyConfig.addFilter("emptyIfJR", function (val) {
+    if (val === null || val === undefined) return "";
+    const s = String(val).trim();
+    if (
+      !s ||
+      /^jr$/i.test(s) ||
+      /^not\s*available$/i.test(s) ||
+      s === "#" ||
+      s.toLowerCase() === "null"
+    ) {
+      return "";
+    }
+    return s;
   });
 
   // ✅ This alias is correct because _includes/layouts is in the root
@@ -29,30 +78,33 @@ module.exports = function (eleventyConfig) {
 
   const corpora = loadCorpora();
 
+  // UPDATED: keep all rows; no JR filtering here
   eleventyConfig.addCollection("corporaPages", function () {
     const seen = new Set();
 
-    return corpora.map(corpus => {
-      const lang = corpus.data.language;
-      const fileSlug = corpus.fileSlug;
-      const key = `${fileSlug}--${lang}`;
+    return corpora
+      .map(corpus => {
+        const lang = corpus.data.language;
+        const fileSlug = corpus.fileSlug;
+        const key = `${fileSlug}--${lang}`;
 
-      if (seen.has(key)) return null;
-      seen.add(key);
+        if (seen.has(key)) return null;
+        seen.add(key);
 
-      return {
-        title: corpus.title,
-        fileSlug,
-        data: corpus.data
-      };
-    }).filter(Boolean);
+        return {
+          title: corpus.title,
+          fileSlug,
+          data: corpus.data
+        };
+      })
+      .filter(Boolean);
   });
 
   return {
     dir: {
       input: "input",
-      includes: "../_includes",           // ✅ FIXED: points outside input/
-      layouts: "../_includes/layouts",    // ✅ FIXED: points outside input/
+      includes: "../_includes",
+      layouts: "../_includes/layouts",
       data: "data",
       output: "_site"
     },
