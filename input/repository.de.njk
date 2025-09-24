@@ -253,17 +253,20 @@ title: Repositorium – DAKODA Infrastruktur
 
 
 {% elif key == "speakers_texts" %}
-  {% set sp = corpus.data.corpus_subcorpus_sizeLearners | jrLabel %}
-  {% set tx = corpus.data.corpus_subcorpus_sizeTexts   | jrLabel %}
+  {# Prefer the pre-computed string from corpora.js; fall back to the two size fields #}
+  {% set combined = corpus.data.speakers_texts | emptyIfJR %}
+  {% set sp = corpus.data.corpus_subcorpus_sizeLearners | emptyIfJR %}
+  {% set tx = corpus.data.corpus_subcorpus_sizeTexts   | emptyIfJR %}
   <td>
-    {% if sp != 'Not available' or tx != 'Not available' %}
-      {% if sp != 'Not available' %}{{ sp }}{% else %}Not available{% endif %}
-      {% if sp != 'Not available' and tx != 'Not available' %}/{% endif %}
-      {% if tx != 'Not available' %}{{ tx }}{% endif %}
+    {% if combined %}
+      {{ combined }}
+    {% elseif sp or tx %}
+      {{ sp or '0' }} / {{ tx or '0' }}
     {% else %}
       Not available
     {% endif %}
   </td>
+
 
 
 

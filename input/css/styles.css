@@ -1905,3 +1905,141 @@ th.sortable.desc .sort-icon {
 .dropdown .dropdown-content a {
   color: inherit;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* === Dashboard (match Notebook card colors & 4-up grid) === */
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(220px,1fr)); /* narrower width → fits 4 */
+  gap:1rem;
+  margin-top:1rem;
+}
+
+/* responsive fallbacks */
+@media (max-width:1280px){ .dashboard-grid{ grid-template-columns:repeat(3, minmax(220px,1fr)); } }
+@media (max-width:980px) { .dashboard-grid{ grid-template-columns:repeat(2, minmax(220px,1fr)); } }
+@media (max-width:600px) { .dashboard-grid{ grid-template-columns:1fr; } }
+
+/* match Notebook card palette */
+.dashboard-card{
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+  padding:1.2rem 1.25rem;
+  border-radius:12px;
+  background-color:#e5f1ff;   /* same as .notebook-card */
+  border:1px solid #ddd;       /* same border */
+  box-shadow:0 2px 6px rgba(0,0,0,.05); /* same shadow */
+  transition:box-shadow .2s ease, transform .18s ease;
+  min-height:240px;            /* taller */
+}
+
+.dashboard-card:hover{ box-shadow:0 4px 12px rgba(0,0,0,.08); transform:translateY(-2px); }
+
+.dashboard-card h3{ margin:0 0 .3rem 0; color:#2c3e50; }
+.dashboard-card p{ margin:0; color:#555; line-height:1.45; flex:1 1 auto; }
+
+/* only the button is a link */
+.dashboard-link{
+  align-self:flex-start;
+  font-weight:600;
+  padding:.5rem .75rem;
+  border-radius:10px;
+  background:#ecf0f1;
+  color:#2c3e50;
+  border:1px solid #d0d7de;
+  text-decoration:none;
+  box-shadow:inset 0 -1px 0 rgba(0,0,0,.03);
+}
+.dashboard-link:hover{ background:#fff; border-color:#c7d6ff; }
+
+/* small screens: slightly shorter */
+@media (max-width:480px){
+  .dashboard-card{ min-height:200px; padding:1rem; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- Dashboard: tighter 4-up cards --- */
+.dashboard-grid{
+  display:grid;
+  /* smaller min width + tighter gap → fits 4 more easily */
+  grid-template-columns: repeat(4, minmax(190px, 1fr));
+  gap: .8rem;
+  margin-top: 1rem;
+}
+
+/* always force 4 cols on desktop widths */
+@media (min-width: 1024px){
+  .dashboard-grid{ grid-template-columns: repeat(4, minmax(190px, 1fr)); }
+}
+
+/* compact card styling (height, padding, fonts) */
+.dashboard-card{
+  padding: .9rem 1rem;        /* was 1.2rem 1.25rem */
+  border-radius: 10px;        /* a tad tighter */
+  min-height: 200px;          /* was 240px */
+}
+
+.dashboard-card h3{
+  font-size: 1.1rem;          /* was 1.25rem */
+  margin: 0 0 .25rem 0;
+}
+
+.dashboard-card p{
+  font-size: .92rem;          /* slightly smaller paragraph */
+  line-height: 1.4;
+}
+
+/* smaller “Open” pill to save space */
+.dashboard-link{
+  padding: .4rem .6rem;       /* was .5rem .75rem */
+  border-radius: 8px;
+}
+
+/* keep hover gentle */
+.dashboard-card:hover{ transform: translateY(-1px); }
+
