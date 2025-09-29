@@ -1,0 +1,57 @@
+[
+  {
+    "__EMPTY": "Beldeko",
+    "texts": 301,
+    "speakers": 115
+  },
+  {
+    "__EMPTY": "MERLIN",
+    "texts": 1033,
+    "speakers": 1033
+  },
+  {
+    "__EMPTY": "DULKO-Essay",
+    "texts": 34,
+    "speakers": 30
+  },
+  {
+    "__EMPTY": "Dulko-Translations",
+    "texts": 30,
+    "speakers": 26
+  },
+  {
+    "__EMPTY": "FA-GBWT-L2_FalkoGeorgetownL2_BWT",
+    "texts": 110,
+    "speakers": 106
+  },
+  {
+    "__EMPTY": "FaGP-L2_FalkoGeorgetownL2_PPT",
+    "texts": 92,
+    "speakers": 28
+  },
+  {
+    "__EMPTY": "MULTILIT",
+    "texts": 586,
+    "speakers": 260
+  },
+  {
+    "__EMPTY": "PETERSEN",
+    "texts": 369,
+    "speakers": 198
+  },
+  {
+    "__EMPTY": "DUO",
+    "texts": 377,
+    "speakers": 339
+  },
+  {
+    "__EMPTY": "Falko-Kobalt-Extension",
+    "texts": 107,
+    "speakers": 106
+  },
+  {
+    "__EMPTY": "WTLD",
+    "texts": 891,
+    "speakers": 239
+  }
+]

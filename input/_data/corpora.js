@@ -1,7 +1,6 @@
 // input/_data/corpora.js
 const fs = require("fs");
 const path = require("path");
-const XLSX = require("xlsx");
 
 /* ----------------------------- small helpers ----------------------------- */
 function generateSlug(title) {
@@ -10,26 +9,17 @@ function generateSlug(title) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
-
 function emptyish(v) {
   if (v === null || v === undefined) return true;
   const s = String(v).trim();
-  return (
-    !s ||
-    /^jr$/i.test(s) ||
-    /^not\s*available$/i.test(s) ||
-    s === "#" ||
-    s.toLowerCase() === "null"
-  );
+  return !s || /^jr$/i.test(s) || /^not\s*available$/i.test(s) || s === "#" || s.toLowerCase() === "null";
 }
-
 function pick(obj, ...keys) {
   for (const k of keys) {
     if (obj && !emptyish(obj[k])) return obj[k];
   }
   return undefined;
 }
-
 function pickCEFR(val) {
   if (emptyish(val)) return undefined;
   const m = String(val).toUpperCase().match(/A1|A2|B1|B2|C1|C2/);
@@ -39,15 +29,8 @@ function pickCEFR(val) {
 /* -------------------- scan DKD download folder for files ------------------ */
 function detectDownloads(corpusFolderName) {
   const folderPath = path.join(__dirname, "../data", corpusFolderName);
-  const result = {
-    cas_data: "",
-    plain_text: "",
-    metadata_csv: "",
-    source_format: ""
-  };
-
+  const result = { cas_data: "", plain_text: "", metadata_csv: "", source_format: "" };
   if (!fs.existsSync(folderPath)) return result;
-
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
     const lower = file.toLowerCase();
@@ -59,42 +42,42 @@ function detectDownloads(corpusFolderName) {
   return result;
 }
 
-/* ------------- load speakers/texts from Excel (robust headers) ------------ */
+/* ------------- load speakers/texts from JSON (robust headers) ------------- */
 function loadSpeakersTextsMap() {
   const dataDir = path.join(__dirname, "../data");
   const candidates = [
-    path.join(dataDir, "speaker_text_counts_repo.xlsx"),
-    path.join(dataDir, "repo_table_layout_new.xlsx"),
+    path.join(dataDir, "speaker_text_counts_repo.json"),
+    path.join(dataDir, "speakers_texts.json"),
   ];
   const file = candidates.find(p => fs.existsSync(p));
   if (!file) return new Map();
 
-  const wb = XLSX.readFile(file);
-  const sheetName = wb.SheetNames[0];
-  const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: "" });
+  let rows = [];
+  try {
+    const raw = fs.readFileSync(file, "utf-8");
+    rows = JSON.parse(raw);
+  } catch {
+    return new Map();
+  }
 
   const norm = s => String(s || "").trim();
-  const toSlug = s => norm(s)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  const lower = s => norm(s).toLowerCase();
+  const toSlug = s => generateSlug(s);
 
-  // build lowercase header map
+  // Lowercase header map
   const headerMap = {};
   if (rows[0]) {
     Object.keys(rows[0]).forEach(h => (headerMap[h.toLowerCase()] = h));
   }
 
-  // choose key header (corpus/signet/slug/name/... or fall back to first column, e.g. "Unnamed: 0")
-  const preferredKeyHeaders = [
-    "corpus", "signet", "slug", "name", "corpus title", "korpustitel"
-  ];
+  // Choose key column (fallback to first)
+  const preferredKeyHeaders = ["corpus","signet","slug","name","corpus title","korpustitel","acronym","kurzname"];
   let keyHeaderLower = preferredKeyHeaders.find(h => headerMap[h]);
   if (!keyHeaderLower) keyHeaderLower = Object.keys(headerMap)[0];
   const keyHeader = headerMap[keyHeaderLower];
 
-  const speakersHeader = headerMap["speakers"] || headerMap["learners"];
-  const textsHeader    = headerMap["texts"]    || headerMap["documents"];
+  const speakersHeader = headerMap["speakers"] || headerMap["learners"] || headerMap["sprecher"];
+  const textsHeader    = headerMap["texts"]    || headerMap["documents"] || headerMap["texte"];
 
   const map = new Map();
 
@@ -103,19 +86,47 @@ function loadSpeakersTextsMap() {
     const speakersRaw = speakersHeader ? r[speakersHeader] : "";
     const textsRaw    = textsHeader    ? r[textsHeader]    : "";
 
+    // Allow numeric or numeric-like strings; ignore commas/spaces
     const speakers = Number(String(speakersRaw).replace(/[^\d.-]/g, "")) || 0;
     const texts    = Number(String(textsRaw).replace(/[^\d.-]/g, "")) || 0;
 
-    const keyName = norm(keyRaw);
-    const keySlug = toSlug(keyRaw);
-    if (!keyName && !keySlug) return;
+    const keyNameLower = lower(keyRaw);
+    const keySlug      = toSlug(keyRaw);
+
+    if (!keyNameLower && !keySlug) return;
 
     const entry = { speakers, texts };
-    if (keySlug) map.set(keySlug, entry);
-    if (keyName) map.set(keyName, entry);
+
+    // Store two keys so we can match by either name (case-insensitive) or slug later
+    if (keyNameLower) map.set(`name:${keyNameLower}`, entry);
+    if (keySlug)      map.set(`slug:${keySlug}`, entry);
   });
 
   return map;
+}
+
+/* --------- try many ways to find a speakers/texts hit for a corpus -------- */
+function lookupCounts(countsMap, meta, fallbackTitle, fallbackSlug) {
+  const norm = s => String(s || "").trim();
+  const lower = s => norm(s).toLowerCase();
+  const slug = s => generateSlug(s);
+
+  const signet   = norm(meta.corpus_subcorpus_signet);
+  const acronym  = norm(meta.corpus_admin_acronym);
+  const title    = norm(fallbackTitle);
+  const cname    = norm(meta.corpus_name);
+
+  const candidates = [
+    `name:${lower(signet)}`,   `slug:${slug(signet)}`,
+    `name:${lower(acronym)}`,  `slug:${slug(acronym)}`,
+    `name:${lower(title)}`,    `slug:${fallbackSlug}`,
+    `name:${lower(cname)}`,    `slug:${slug(cname)}`
+  ];
+
+  for (const key of candidates) {
+    if (countsMap.has(key)) return countsMap.get(key);
+  }
+  return null;
 }
 
 /* --------------------------------- main ----------------------------------- */
@@ -129,7 +140,6 @@ module.exports = () => {
   if (fs.existsSync(metaPath)) {
     try {
       const raw = fs.readFileSync(metaPath, "utf-8");
-      // corpora.json is an array → wrap to parse safely
       const wrapped = `{ "corpora": ${raw} }`;
       const parsed = JSON.parse(wrapped).corpora;
 
@@ -139,8 +149,6 @@ module.exports = () => {
         if (emptyish(title)) continue;
 
         const slug = generateSlug(title);
-        const signet  = (meta.corpus_subcorpus_signet || "").trim();
-        const acronym = (meta.corpus_admin_acronym   || "").trim();
 
         // availability & SRC (old/new keys)
         const availability = pick(meta, "corpus_admin_availability", "corpus_admin_access");
@@ -150,8 +158,8 @@ module.exports = () => {
         let modalityRaw = pick(meta, "task_interaction_mode", "modality");
         let modality = "";
         if (Array.isArray(modalityRaw)) {
-          const norm = modalityRaw.map(v => String(v || "").toLowerCase()).filter(Boolean);
-          modality = Array.from(new Set(norm)).join("; ");
+          const normVals = modalityRaw.map(v => String(v || "").toLowerCase()).filter(Boolean);
+          modality = Array.from(new Set(normVals)).join("; ");
         } else {
           modality = String(modalityRaw || "");
         }
@@ -162,35 +170,19 @@ module.exports = () => {
         const singleLevel = pick(meta, "corpus_proficiency_level", "corpus_proficiencyLevel");
         if (emptyish(cefrMin) && emptyish(cefrMax) && !emptyish(singleLevel)) {
           const one = pickCEFR(singleLevel);
-          cefrMin = one;
-          cefrMax = one;
+          cefrMin = one; cefrMax = one;
         }
 
-        // sizes from old/new keys (for fallback)
+        // sizes from old/new keys (still exposed)
         const sizeTexts    = pick(meta, "corpus_subcorpus_sizeTexts", "corpus_subcorpus_size_texts", "texts");
         const sizeTokens   = pick(meta, "corpus_subcorpus_sizeTokens", "corpus_subcorpus_size_tokens", "tokens");
         const sizeLearners = pick(meta, "corpus_subcorpus_sizeLearners", "corpus_subcorpus_size_learners", "speakers");
 
-        // Speakers / Texts from Excel map (lookup by multiple keys)
-        const fromXlsx =
-          countsMap.get(signet) ||
-          countsMap.get(slug) ||
-          countsMap.get(String(title).trim()) ||
-          countsMap.get(String(acronym).trim()) ||
-          null;
-
-        // prefer Excel; otherwise fall back to JSON numbers (if numeric)
-        const speakers_count = fromXlsx
-          ? fromXlsx.speakers
-          : (Number(sizeLearners) || "");
-        const texts_count = fromXlsx
-          ? fromXlsx.texts
-          : (Number(sizeTexts) || "");
-
-        const speakers_texts =
-          speakers_count !== "" || texts_count !== ""
-            ? `${speakers_count || 0} / ${texts_count || 0}`
-            : "";
+        // Speakers / Texts from JSON map (robust lookup)
+        const hit = lookupCounts(countsMap, meta, title, slug);
+        const speakers_count = hit ? hit.speakers : "";
+        const texts_count    = hit ? hit.texts    : "";
+        const speakers_texts = hit ? `${speakers_count || 0} / ${texts_count || 0}` : "";
 
         // detect DKD download files in input/data/<folder>
         const downloads = detectDownloads(meta.corpus_name || slug);
@@ -201,10 +193,8 @@ module.exports = () => {
             fileSlug: slug,
             language: lang,
             data: {
-              // keep original fields visible if templates reference them
-              ...meta,
+              ...meta, // keep original fields for templates
 
-              // normalized/derived values
               language: lang,
               fileSlug: slug,
 
@@ -229,13 +219,14 @@ module.exports = () => {
               texts_count,
               speakers_texts,
 
-              // also override old size fields if Excel provided values (or numeric JSON)
-              corpus_subcorpus_sizeLearners:
-                speakers_count !== "" ? speakers_count : (meta.corpus_subcorpus_sizeLearners || ""),
-              corpus_subcorpus_sizeTexts:
-                texts_count !== "" ? texts_count : (meta.corpus_subcorpus_sizeTexts || ""),
+              // also overwrite old-size fields if JSON provided values (so existing template block works)
+              corpus_subcorpus_sizeLearners: !emptyish(speakers_count)
+                ? speakers_count
+                : (meta.corpus_subcorpus_sizeLearners || ""),
+              corpus_subcorpus_sizeTexts: !emptyish(texts_count)
+                ? texts_count
+                : (meta.corpus_subcorpus_sizeTexts || ""),
 
-              // DKD detected files
               ...downloads,
             }
           });
