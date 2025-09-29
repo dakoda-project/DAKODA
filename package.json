@@ -15,8 +15,5 @@
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "serve": "^14.2.1"
-  },
-  "dependencies": {
-    "xlsx": "^0.18.5"
   }
 }
