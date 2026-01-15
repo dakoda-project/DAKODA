@@ -13,23 +13,22 @@ title: Repositorium – DAKODA Infrastruktur
 <button class="auth-btn">Authentifizieren</button>
 
 <!-- Enhanced Filter Bar -->
-<!-- Enhanced Filter Bar -->
 <div class="filter-bar-enhanced">
   <div class="filter-group-enhanced">
     <div class="filter-item">
       <label for="accessFilter">Zugang:</label>
-      <select id="accessFilter" onchange="filterTable()">
+      <select id="accessFilter">
         <option value="all">Alle</option>
         <option value="open">Open</option>
-        <option value="closed">Closed</option>
         <option value="restricted">Restricted</option>
+        <option value="closed">Closed</option>
         <option value="special restrictions">Special Restrictions</option>
       </select>
     </div>
 
     <div class="filter-item">
       <label for="l1Filter">L1 der Lernenden:</label>
-      <select id="l1Filter" onchange="filterTable()">
+      <select id="l1Filter">
         <option value="all">Alle</option>
         <option value="mono">Mono</option>
         <option value="multi">Multi</option>
@@ -38,7 +37,7 @@ title: Repositorium – DAKODA Infrastruktur
 
     <div class="filter-item">
       <label for="modalityFilter">Modalität:</label>
-      <select id="modalityFilter" onchange="filterTable()">
+      <select id="modalityFilter">
         <option value="all">Alle</option>
         <option value="written">Written</option>
         <option value="spoken">Spoken</option>
@@ -51,7 +50,7 @@ title: Repositorium – DAKODA Infrastruktur
       <div class="ger-row">
         <div class="ger-field">
           <label for="gerMinFilter" class="sublabel">Min</label>
-          <select id="gerMinFilter" onchange="filterTable()">
+          <select id="gerMinFilter">
             <option value="all">Alle</option>
             <option value="A1">A1</option>
             <option value="A2">A2</option>
@@ -63,7 +62,7 @@ title: Repositorium – DAKODA Infrastruktur
         </div>
         <div class="ger-field">
           <label for="gerMaxFilter" class="sublabel">Max</label>
-          <select id="gerMaxFilter" onchange="filterTable()">
+          <select id="gerMaxFilter">
             <option value="all">Alle</option>
             <option value="A1">A1</option>
             <option value="A2">A2</option>
@@ -76,6 +75,9 @@ title: Repositorium – DAKODA Infrastruktur
       </div>
     </div>
     <!-- end GER -->
+    <div class="filter-item">
+      <button type="button" id="resetFiltersBtn" class="filter-reset-btn" aria-label="Reset Filter">Reset</button>
+    </div>
   </div>
 </div>
 
@@ -85,8 +87,8 @@ title: Repositorium – DAKODA Infrastruktur
 <div class="repo-legend">
   <span class="legend-title">Legende:</span>
   <span class="legend-item"><span class="legend-swatch open"></span> open</span>
-  <span class="legend-item"><span class="legend-swatch closed"></span> closed</span>
   <span class="legend-item"><span class="legend-swatch restricted"></span> restricted</span>
+  <span class="legend-item"><span class="legend-swatch closed"></span> closed</span>
   <span class="legend-item"><span class="legend-swatch special"></span> special restrictions</span>
 </div>
 
@@ -295,188 +297,3 @@ title: Repositorium – DAKODA Infrastruktur
   {% endfor %}
 </tbody>
 </table>
-
-<script>
-function filterTable() {
-  const access   = (document.getElementById("accessFilter")?.value || "all").toLowerCase();
-  const l1       = (document.getElementById("l1Filter")?.value || "all").toLowerCase();
-  const modality = (document.getElementById("modalityFilter")?.value || "all").toLowerCase();
-  const gerMin   = (document.getElementById("gerMinFilter")?.value || "all").toUpperCase();
-  const gerMax   = (document.getElementById("gerMaxFilter")?.value || "all").toUpperCase();
-
-  const CEFR = ['A1','A2','B1','B2','C1','C2'];
-  const rxCEFR = /(A1|A2|B1|B2|C1|C2)/i;
-
-  function idx(val) {
-    if (!val) return -1;
-    const m = String(val).match(rxCEFR);
-    return m ? CEFR.indexOf(m[1].toUpperCase()) : -1;
-  }
-
-  let minBound = gerMin === 'ALL' ? -Infinity : CEFR.indexOf(gerMin);
-  let maxBound = gerMax === 'ALL' ?  Infinity : CEFR.indexOf(gerMax);
-  if (Number.isFinite(minBound) && Number.isFinite(maxBound) && minBound > maxBound) {
-    // swap if user chose Min > Max
-    const t = minBound; minBound = maxBound; maxBound = t;
-  }
-
-  const rows = document.querySelectorAll("#repo-body tr");
-  rows.forEach(row => {
-    const rAccess = (row.dataset.availability || "").toLowerCase();
-    const rL1     = (row.dataset.l1type || "").toLowerCase();
-    const rMod    = (row.dataset.modality || "").toLowerCase();
-
-    // Extract CEFR indices even if text contains extra words
-    const rMinIdx = idx(row.dataset.cefrMin);
-    const rMaxIdx = idx(row.dataset.cefrMax);
-
-    const accOK = access === "all" || rAccess === access;
-    const l1OK  = l1 === "all" || rL1 === l1;
-    const modOK = modality === "all" || rMod === modality;
-
-    const anyGerSelected = (gerMin !== 'ALL') || (gerMax !== 'ALL');
-    let gerOK = true;
-    if (anyGerSelected) {
-      if (rMinIdx === -1 && rMaxIdx === -1) {
-        // no CEFR info → hide when user applied GER filter
-        gerOK = false;
-      } else {
-        const rowMin = (rMinIdx === -1) ? -Infinity : rMinIdx;
-        const rowMax = (rMaxIdx === -1) ?  Infinity : rMaxIdx;
-        gerOK = rowMin >= minBound && rowMax <= maxBound;
-      }
-    }
-
-    row.style.display = (accOK && l1OK && modOK && gerOK) ? "" : "none";
-  });
-}
-
-// Optional: apply current filters on load (e.g., if values are preselected)
-window.addEventListener("DOMContentLoaded", () => {
-  filterTable();
-});
-</script>
-
-
-
-
-
-<script>
-(function () {
-  const tbody = document.getElementById('repo-body');
-  if (!tbody) return;
-
-  const ORDER = {
-    availability: ['open', 'closed', 'restricted', 'special restrictions'],
-    l1type: ['mono', 'multi'],
-    modality: ['written', 'spoken', 'spoken; written'],
-    cefr: ['A1','A2','B1','B2','C1','C2']
-  };
-
-  // Cache rows and remember original order
-  const rows = Array.from(tbody.querySelectorAll('tr'));
-  rows.forEach((r, i) => {
-    if (!r.dataset.index) r.dataset.index = i; // fallback if not set server-side
-  });
-
-  const ths = document.querySelectorAll('th.sortable');
-
-  ths.forEach(th => {
-    th.addEventListener('click', () => {
-      const key = th.dataset.sortKey;
-
-      // 3-state cycle: none -> asc -> desc -> none
-      const isAsc  = th.classList.contains('asc');
-      const isDesc = th.classList.contains('desc');
-
-      ths.forEach(t => t.classList.remove('asc','desc')); // clear all
-
-      if (!isAsc && !isDesc) {
-        th.classList.add('asc');
-        sortAndRender(key, 'asc');
-      } else if (isAsc) {
-        th.classList.add('desc');
-        sortAndRender(key, 'desc');
-      } else {
-        // reset to original
-        updateIcons();
-        const restored = rows.slice().sort((a,b) => (+a.dataset.index) - (+b.dataset.index));
-        restored.forEach(r => tbody.appendChild(r));
-        return;
-      }
-
-      updateIcons();
-    });
-  });
-
-  function updateIcons() {
-    ths.forEach(th => {
-      const icon = th.querySelector('.sort-icon');
-      if (!icon) return;
-      if (th.classList.contains('asc')) icon.textContent = '▲';
-      else if (th.classList.contains('desc')) icon.textContent = '▼';
-      else icon.textContent = '↕';
-    });
-  }
-
-  function sortAndRender(key, dir) {
-    const sorted = rows.slice().sort((a, b) => cmp(a, b, key, dir));
-    sorted.forEach(r => tbody.appendChild(r));
-  }
-
-  function cmp(a, b, key, dir) {
-    let c = 0;
-    switch (key) {
-      case 'title': {
-        // sort by acronym first; fallback to full title
-        const av = (a.dataset.acronym || a.dataset.title || '').toLowerCase();
-        const bv = (b.dataset.acronym || b.dataset.title || '').toLowerCase();
-        c = av.localeCompare(bv, undefined, {sensitivity:'base'});
-        break;
-      }
-      case 'availability':
-        c = orderCompare(a.dataset.availability, b.dataset.availability, ORDER.availability);
-        break;
-
-      case 'l1type':
-        c = orderCompare(a.dataset.l1type, b.dataset.l1type, ORDER.l1type);
-        break;
-
-      case 'modality':
-        c = orderCompare(a.dataset.modality, b.dataset.modality, ORDER.modality);
-        break;
-
-      case 'cefr-min':
-        c = cefrCompare(a.dataset.cefrMin, b.dataset.cefrMin);
-        break;
-
-      case 'cefr-max':
-        c = cefrCompare(a.dataset.cefrMax, b.dataset.cefrMax);
-        break;
-
-      default: {
-        const av = (a.dataset.title || '').toLowerCase();
-        const bv = (b.dataset.title || '').toLowerCase();
-        c = av.localeCompare(bv, undefined, {sensitivity:'base'});
-      }
-    }
-    return dir === 'asc' ? c : -c;
-  }
-
-  function orderCompare(a, b, order) {
-    const ai = orderIndex(a, order), bi = orderIndex(b, order);
-    return ai - bi;
-  }
-  function orderIndex(v, order) {
-    v = (v || '').toLowerCase().trim();
-    const i = order.indexOf(v);
-    return i === -1 ? Number.POSITIVE_INFINITY : i;
-  }
-  function cefrCompare(a, b) {
-    const CEFR = ORDER.cefr;
-    const ai = CEFR.indexOf((a||'').toUpperCase().trim());
-    const bi = CEFR.indexOf((b||'').toUpperCase().trim());
-    return (ai === -1 ? Number.POSITIVE_INFINITY : ai) - (bi === -1 ? Number.POSITIVE_INFINITY : bi);
-  }
-})();
-</script>

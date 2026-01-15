@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{{ title }}</title>
   <link rel="stylesheet" href="/css/styles.css" />
-  <script src="/js/lang.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -50,47 +49,26 @@
       <img src="/css/img/sponsor1.png" alt="Sponsor 1" class="sponsor-logo" />
       <img src="/css/img/sponsor2.png" alt="Sponsor 2" class="sponsor-logo" />
     </div>
-    <p>© DAKODA Infrastructure 2025</p>
+    <p>© DAKODA Infrastructure 2026</p>
   </footer>
 
-  <script src="/js/animations.js"></script>
-  <button onclick="scrollToTop()" id="scrollTopBtn" title="Go to top">⬆️</button>
+<button id="scrollTopBtn" aria-label="Top">⬆️</button>
 
-<script>
-  // Language button handler - calls the function from lang.js
-  function switchLang(targetLang) {
-    setLanguage(targetLang);
-  }
+<script src="/js/ui.js" defer></script>
+<script src="/js/lang.js" defer></script>
+<script src="/js/table.js" defer></script>
 
-  // Scroll to top button
-  const scrollBtn = document.getElementById("scrollTopBtn");
-  window.onscroll = function () {
-    scrollBtn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
-  };
+<script defer>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Generische UI initialisieren
+    if (window.DAKODA?.ui?.init) {
+      window.DAKODA.ui.init();
+    }
 
-  function scrollToTop() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  }
-
-  // Sidebar toggle
-  const sidebar = document.getElementById("sidebar");
-  const toggleBtn = document.getElementById("toggleSidebar");
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
-      toggleBtn.textContent = sidebar.classList.contains("collapsed") ? "⯈" : "⇤";
-    });
-  }
-</script>
-
-<script>
-  const sidebar = document.getElementById("sidebar");
-  const toggleBtn = document.getElementById("toggleSidebar");
-
-  toggleBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("collapsed");
-    toggleBtn.textContent = sidebar.classList.contains("collapsed") ? "⯈" : "⇤";
+    // Tabellenlogik nur initialisieren, wenn Tabelle vorhanden ist
+    if (document.getElementById('repoTable') && window.DAKODA?.table?.initRepoTable) {
+      window.DAKODA.table.initRepoTable();
+    }
   });
 </script>
 

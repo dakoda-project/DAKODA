@@ -695,6 +695,33 @@ details[open] summary::before {
   outline: none;
 }
 
+.filter-reset-btn {
+  padding: 6px 12px;
+  background-color: var(--color-surface-alt);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-reset-btn:hover:not(:disabled) {
+  background-color: var(--brand-tint, #e5f1ff);
+  border-color: var(--brand-primary);
+}
+
+.filter-reset-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.filter-reset-btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
 
 /* Sortable headers */
 th.sortable {
@@ -991,7 +1018,7 @@ th.sortable.desc .sort-icon {
 }
 
 /* Karten-Grid: zentriert, flexible Anzahl pro Zeile */
-.dashboard-grid{
+.highlight-grid{
   display:flex;
   flex-wrap:wrap;
   gap:1rem;
@@ -1009,7 +1036,7 @@ th.sortable.desc .sort-icon {
 }
 
 /* Karten: gleiches Aussehen in beiden Blöcken */
-.dashboard-card{
+.highlight-card{
   box-sizing:border-box;
   flex:0 1 280px;             /* Basis ~280px, kein Wachstum → Zentrierung funktioniert */
   min-width:220px;
@@ -1027,9 +1054,9 @@ th.sortable.desc .sort-icon {
   min-height:240px;
 }
 
-.dashboard-card:hover{ box-shadow:0 4px 12px rgba(0,0,0,.08); transform:translateY(-2px); }
-.dashboard-card h3{ margin:0 0 .3rem; color:#2c3e50; }
-.dashboard-card p{ margin:0; color:#555; line-height:1.45; flex:1 1 auto; }
+.highlight-card:hover{ box-shadow:0 4px 12px rgba(0,0,0,.08); transform:translateY(-2px); }
+.highlight-card h3{ margin:0 0 .3rem; color:#2c3e50; }
+.highlight-card p{ margin:0; color:#555; line-height:1.45; flex:1 1 auto; }
 
 /* Icons (nur im ersten Block vorhanden) */
 .icon{
@@ -1041,7 +1068,7 @@ th.sortable.desc .sort-icon {
 
 /* Buttons: beide Klassen gleich stylen */
 .cta-button,
-.dashboard-link{
+.highlight-link{
   align-self:flex-start;
   font-weight:600;
   padding:.5rem .75rem;
@@ -1054,20 +1081,20 @@ th.sortable.desc .sort-icon {
 }
 
 .cta-button:hover,
-.dashboard-link:hover{
+.highlight-link:hover{
   background:#fff;
   border-color:#c7d6ff;
 }
 
 .cta-button:focus-visible,
-.dashboard-link:focus-visible{
+.highlight-link:focus-visible{
   outline:2px solid #5b8fff;
   outline-offset:2px;
 }
 
 /* Kleine Bildschirme: volle Breite je Karte */
 @media (max-width:480px){
-  .dashboard-card{
+  .highlight-card{
     min-height:200px;
     padding:1rem;
     flex:1 1 100%;
@@ -1077,5 +1104,5 @@ th.sortable.desc .sort-icon {
 
 /* Weniger Bewegung, falls gewünscht */
 @media (prefers-reduced-motion: reduce){
-  .dashboard-card{ transition:none; }
+  .highlight-card{ transition:none; }
 }
