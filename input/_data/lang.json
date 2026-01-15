@@ -35,10 +35,6 @@
     "en": "Authenticate (Demo)",
     "de": "Authentifizieren (Demo)"
   },
-  "search_placeholder": {
-    "en": "Search corpora...",
-    "de": "Korpora durchsuchen..."
-  },
   "tags": {
     "spoken": { "en": "Spoken", "de": "Gesprochen" },
     "written": { "en": "Written", "de": "Schriftlich" },

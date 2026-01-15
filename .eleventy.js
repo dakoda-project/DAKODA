@@ -5,12 +5,14 @@ const path = require("path");
 const loadCorpora = require("./input/_data/corpora.js");
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPassthroughCopy("input/css");
-  eleventyConfig.addPassthroughCopy("input/css/img");
-  eleventyConfig.addPassthroughCopy("input/js");
-  eleventyConfig.addPassthroughCopy("input/data");
+  [
+    "input/css",
+    "input/js",
+    "input/data",
+    "input/notebooks"
+  ].forEach(dir => eleventyConfig.addPassthroughCopy(dir));
   eleventyConfig.addPassthroughCopy({ "input/static/_redirects": "_redirects" });
-
+  
   eleventyConfig.addFilter("slugifyCorpus", function (value) {
     return value
       .toLowerCase()
@@ -25,53 +27,21 @@ module.exports = function (eleventyConfig) {
     return clean + "...";
   });
 
-  // NEW: jrLabel -> show "Not available" for placeholder values (used in templates)
-  eleventyConfig.addFilter("jrLabel", function (value) {
-    const v = (value ?? "").toString().trim();
-    if (
-      !v ||
-      v === "#" ||
-      /^jr\b/i.test(v) ||
-      /^jr\s*:/i.test(v) ||
-      /^not\s*available$/i.test(v) ||
-      v.toLowerCase() === "null"
-    ) {
-      return "Not available";
-    }
-    return v;
-  });
+  function isPlaceholder(val) {
+    const s = String(val ?? "").trim().toLowerCase();
+    return !s || s === "#" || /^jr\b/.test(s) ||
+          /^jr\s*:/.test(s) ||
+          s === "not available" || s === "notAvailable" || s === "null";
+  }
 
-  // NEW: show "Not available" for placeholder values like JR/#/null
-  eleventyConfig.addFilter("cleanJR", function (val) {
-    if (val === null || val === undefined) return "Not available";
-    const s = String(val).trim();
-    if (
-      !s ||
-      /^jr$/i.test(s) ||
-      /^not\s*available$/i.test(s) ||
-      s === "#" ||
-      s.toLowerCase() === "null"
-    ) {
-      return "Not available";
-    }
-    return s;
-  });
+  eleventyConfig.addFilter("jrLabel", val =>
+    isPlaceholder(val) ? "-" : val);
 
-  // NEW: blank out placeholder values when used in data-* attributes
-  eleventyConfig.addFilter("emptyIfJR", function (val) {
-    if (val === null || val === undefined) return "";
-    const s = String(val).trim();
-    if (
-      !s ||
-      /^jr$/i.test(s) ||
-      /^not\s*available$/i.test(s) ||
-      s === "#" ||
-      s.toLowerCase() === "null"
-    ) {
-      return "";
-    }
-    return s;
-  });
+  eleventyConfig.addFilter("cleanJR", val =>
+    isPlaceholder(val) ? "-" : val);
+
+  eleventyConfig.addFilter("emptyIfJR", val =>
+    isPlaceholder(val) ? "" : val);
 
   // ✅ This alias is correct because _includes/layouts is in the root
   eleventyConfig.addLayoutAlias("base", "layouts/base.njk");

@@ -12,9 +12,6 @@ title: Repository – DAKODA Infrastructure
 <!-- Authentication Button -->
 <button class="auth-btn">Authenticate</button>
 
-<!-- Search Bar -->
-<input type="text" id="searchInput" placeholder="Search corpora..." class="search-bar">
-
 <!-- Enhanced Filter Bar -->
 <div class="filter-bar-enhanced">
   <div class="filter-group-enhanced">
@@ -101,7 +98,7 @@ title: Repository – DAKODA Infrastructure
 ] %}
 
 <!-- Repository Table -->
-<table class="repo-table">
+<table class="repo-table" id="repoTable">
 <thead>
   <tr>
     {% for key in tableKeys %}
@@ -226,7 +223,7 @@ title: Repository – DAKODA Infrastructure
                 </div>
               </div>
             {% else %}
-              <span>Not available</span>
+              <span>-</span>
             {% endif %}
           </td>
 
@@ -238,7 +235,7 @@ title: Repository – DAKODA Infrastructure
             {% if access == "open" and src %}
               <a href="{{ src }}" target="_blank" rel="noopener">Link</a>
             {% else %}
-              <span>Not available</span>
+              <span>-</span>
             {% endif %}
           </td>
 
@@ -255,7 +252,7 @@ title: Repository – DAKODA Infrastructure
     {% elseif sp or tx %}
       {{ sp or '0' }} / {{ tx or '0' }}
     {% else %}
-      Not available
+      -
     {% endif %}
   </td>
 
