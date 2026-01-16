@@ -27,28 +27,10 @@ module.exports = function (eleventyConfig) {
     return clean + "...";
   });
 
-  function isPlaceholder(val) {
-    const s = String(val ?? "").trim().toLowerCase();
-    return !s || s === "#" || /^jr\b/.test(s) ||
-          /^jr\s*:/.test(s) ||
-          s === "not available" || s === "notAvailable" || s === "null";
-  }
-
-  eleventyConfig.addFilter("jrLabel", val =>
-    isPlaceholder(val) ? "-" : val);
-
-  eleventyConfig.addFilter("cleanJR", val =>
-    isPlaceholder(val) ? "-" : val);
-
-  eleventyConfig.addFilter("emptyIfJR", val =>
-    isPlaceholder(val) ? "" : val);
-
-  // ✅ This alias is correct because _includes/layouts is in the root
   eleventyConfig.addLayoutAlias("base", "layouts/base.njk");
 
   const corpora = loadCorpora();
 
-  // UPDATED: keep all rows; no JR filtering here
   eleventyConfig.addCollection("corporaPages", function () {
     const seen = new Set();
 

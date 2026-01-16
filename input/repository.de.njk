@@ -185,10 +185,10 @@ title: Repositorium – DAKODA Infrastruktur
   data-title="{{ corpus.data.corpus_admin_name | escape }}"
   data-acronym="{{ (corpus.data.corpus_admin_acronym or corpus.data.corpus_subcorpus_signet or corpus.fileSlug) | escape }}"
   data-availability="{{ corpus.data.corpus_admin_availability | lower | trim }}"
-  data-l1type="{{ corpus.data.corpus_design_l1Type | emptyIfJR | lower | trim }}"
-  data-modality="{{ corpus.data.task_interaction_mode | emptyIfJR | lower | trim }}"
-  data-cefr-min="{{ corpus.data.corpus_proficiency_levelMin | emptyIfJR | upper | trim }}"
-  data-cefr-max="{{ corpus.data.corpus_proficiency_levelMax | emptyIfJR | upper | trim }}"
+  data-l1type="{{ corpus.data.corpus_design_l1Type | lower | trim }}"
+  data-modality="{{ corpus.data.task_interaction_mode | lower | trim }}"
+  data-cefr-min="{{ corpus.data.corpus_proficiency_levelMin | upper | trim }}"
+  data-cefr-max="{{ corpus.data.corpus_proficiency_levelMax | upper | trim }}"
     >
       {% for key in tableKeys %}
         {% if key == "corpus_admin_name" %}
@@ -241,7 +241,7 @@ title: Repositorium – DAKODA Infrastruktur
           <td>
             {% set access = corpus.data.corpus_admin_availability | lower %}
             {% set srcRaw = corpus.data.source %}
-            {% set src = srcRaw | emptyIfJR %}
+            {% set src = srcRaw %}
             {% if access == "open" and src %}
               <a href="{{ src }}" target="_blank" rel="noopener">Link</a>
             {% else %}
@@ -253,9 +253,9 @@ title: Repositorium – DAKODA Infrastruktur
 
 {% elif key == "speakers_texts" %}
   {# Prefer the pre-computed string from corpora.js; fall back to the two size fields #}
-  {% set combined = corpus.data.speakers_texts | emptyIfJR %}
-  {% set sp = corpus.data.corpus_subcorpus_sizeLearners | emptyIfJR %}
-  {% set tx = corpus.data.corpus_subcorpus_sizeTexts   | emptyIfJR %}
+  {% set combined = corpus.data.speakers_texts %}
+  {% set sp = corpus.data.corpus_subcorpus_sizeLearners %}
+  {% set tx = corpus.data.corpus_subcorpus_sizeTexts %}
   <td>
     {% if combined %}
       {{ combined }}
@@ -270,26 +270,26 @@ title: Repositorium – DAKODA Infrastruktur
 
 
         {% elif key == "corpus_proficiency_level" %}
-          <td>{{ corpus.data.corpus_proficiency_levelMin | jrLabel }}</td>
-          <td>{{ corpus.data.corpus_proficiency_levelMax | jrLabel }}</td>
+          <td>{{ corpus.data.corpus_proficiency_levelMin }}</td>
+          <td>{{ corpus.data.corpus_proficiency_levelMax }}</td>
 
         {% elif key == "ANNOTATION" %}
           <td><!-- Annotationen --></td>
 
         {% elif key == "corpus_admin_availability" %}
-          <td>{{ corpus.data[key] | cleanJR }}</td>
+          <td>{{ corpus.data[key] }}</td>
 
         {% elif key == "corpus_design_l1Type" %}
-          <td>{{ corpus.data[key] | cleanJR }}</td>
+          <td>{{ corpus.data[key] }}</td>
 
         {% elif key == "task_interaction_mode" %}
-          <td>{{ corpus.data[key] | cleanJR }}</td>
+          <td>{{ corpus.data[key] }}</td>
 
         {% elif key == "corpus_subcorpus_signet" %}
-          <td>{{ corpus.data[key] | cleanJR }}</td>
+          <td>{{ corpus.data[key] }}</td>
 
         {% else %}
-          <td>{{ corpus.data[key] | cleanJR }}</td>
+          <td>{{ corpus.data[key] }}</td>
         {% endif %}
       {% endfor %}
     </tr>
