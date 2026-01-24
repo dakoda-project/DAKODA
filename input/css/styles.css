@@ -1162,3 +1162,9 @@ th.sortable.desc .sort-icon {
   background-color: #f9f9f9;
   text-decoration: underline;
 }
+
+/* Prevent ID column from breaking on hyphens */
+.repo-table td[data-id-col],
+.repo-table td.id-column {
+  white-space: nowrap;
+}

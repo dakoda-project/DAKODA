@@ -67,9 +67,21 @@ function detectDownloads(meta, fileSlug) {
       downloads.push({
         format: fmt.label,
         url: `${downloadPath}/${fileName}`,
-        fileName: fileName
+        fileName: fileName,
+        type: "download"
       });
     }
+  }
+  
+  // Add source link if available
+  const srcUrl = pick(meta, "corpus_admin_URLdownload", "corpus_admin_url_download");
+  if (!emptyish(srcUrl)) {
+    downloads.push({
+      format: "Source",
+      url: srcUrl,
+      type: "source",
+      external: true
+    });
   }
   
   return {

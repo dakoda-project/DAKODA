@@ -78,8 +78,6 @@ title: Repositorium – DAKODA Infrastruktur
   </div>
 </div>
 
-
-
 <!-- Legend -->
 <div class="repo-legend">
   <span class="legend-title">Legende:</span>
@@ -88,8 +86,6 @@ title: Repositorium – DAKODA Infrastruktur
   <span class="legend-item"><span class="legend-swatch closed"></span> closed</span>
   <span class="legend-item"><span class="legend-swatch special"></span> special restrictions</span>
 </div>
-
-
 
 {% set tableKeys = [
   "corpus_admin_name",
@@ -107,27 +103,20 @@ title: Repositorium – DAKODA Infrastruktur
   <tr>
     {% for key in tableKeys %}
       {% if key == "corpus_admin_name" %}
-       
         <th rowspan="2" class="sortable" data-sort-key="title" title="{{ key }}">
-          {{ display | truncate(35, true, '...') }}
           Korpustitel <span class="sort-icon">↕</span>
         </th>
-        {# CHANGED: single Download column #}
         <th rowspan="2">Downloads</th>
-        <th rowspan="2">Source</th>
 
       {% elif key == "corpus_subcorpus_signet" %}
-        {# CHANGED: rename Siegel... -> ID #}
         <th rowspan="2" title="{{ key }}">ID</th>
 
       {% elif key == "corpus_admin_availability" %}
-        {# CHANGED: force label to Zugang #}
         <th rowspan="2" class="sortable" data-sort-key="availability" title="{{ key }}">
           Zugang <span class="sort-icon">↕</span>
         </th>
 
       {% elif key == "corpus_design_l1Type" %}
-        {# CHANGED: force label to L1 der Lernenden #}
         <th rowspan="2" class="sortable" data-sort-key="l1type" title="{{ key }}">
           L1 der Lernenden <span class="sort-icon">↕</span>
         </th>
@@ -135,9 +124,8 @@ title: Repositorium – DAKODA Infrastruktur
       {% elif key == "corpus_proficiency_level" %}
         <th colspan="2">Kompetenzniveau</th>
 
-{% elif key == "speakers_texts" %}
-  <th rowspan="2">Sprecher / Texte</th>
-
+      {% elif key == "speakers_texts" %}
+        <th rowspan="2">Sprecher / Texte</th>
 
       {% elif key == "task_interaction_mode" %}
         {% set display = displaynames[key] or key %}
@@ -158,9 +146,7 @@ title: Repositorium – DAKODA Infrastruktur
   <tr>
     {% for key in tableKeys %}
       {% if key == "corpus_admin_name" %}
-        {# CHANGED: DKD + SRC headers #}
-        <th>DKD</th>
-        <th>SRC</th>
+        {# Removed: DKD + SRC headers now unified in Downloads #}
       {% elif key == "corpus_proficiency_level" %}
         <th class="sortable" data-sort-key="cefr-min">
           Min <span class="sort-icon">↕</span>
@@ -173,20 +159,18 @@ title: Repositorium – DAKODA Infrastruktur
   </tr>
 </thead>
 
-
 <tbody id="repo-body">
-  {# keep all corpora; do not filter them out #}
   {% for corpus in collections.corporaPages %}
     {% if corpus.data.language == "de" %}
     <tr
-  data-index="{{ loop.index0 }}"
-  data-title="{{ corpus.data.corpus_admin_name | escape }}"
-  data-acronym="{{ (corpus.data.corpus_admin_acronym or corpus.data.corpus_subcorpus_signet or corpus.fileSlug) | escape }}"
-  data-availability="{{ corpus.data.corpus_admin_availability | lower | trim }}"
-  data-l1type="{{ corpus.data.corpus_design_l1Type | lower | trim }}"
-  data-modality="{{ corpus.data.task_interaction_mode | lower | trim }}"
-  data-cefr-min="{{ corpus.data.corpus_proficiency_levelMin | upper | trim }}"
-  data-cefr-max="{{ corpus.data.corpus_proficiency_levelMax | upper | trim }}"
+      data-index="{{ loop.index0 }}"
+      data-title="{{ corpus.data.corpus_admin_name | escape }}"
+      data-acronym="{{ (corpus.data.corpus_admin_acronym or corpus.data.corpus_subcorpus_signet or corpus.fileSlug) | escape }}"
+      data-availability="{{ corpus.data.corpus_admin_availability | lower | trim }}"
+      data-l1type="{{ corpus.data.corpus_design_l1Type | lower | trim }}"
+      data-modality="{{ corpus.data.task_interaction_mode | lower | trim }}"
+      data-cefr-min="{{ corpus.data.corpus_proficiency_levelMin | upper | trim }}"
+      data-cefr-max="{{ corpus.data.corpus_proficiency_levelMax | upper | trim }}"
     >
       {% for key in tableKeys %}
         {% if key == "corpus_admin_name" %}
@@ -201,7 +185,7 @@ title: Repositorium – DAKODA Infrastruktur
             </a>
           </td>
 
-          {# CHANGED: Downloads (dropdown for compactness) #}
+          {# Downloads + Source (unified dropdown) #}
           <td>
             {% set downloads = corpus.data.downloads %}
             {% if downloads and downloads.length > 0 %}
@@ -211,8 +195,10 @@ title: Repositorium – DAKODA Infrastruktur
                 </button>
                 <div class="download-dropdown">
                   {% for dl in downloads %}
-                    <a href="{{ dl.url }}" title="Download {{ dl.format }}">
-                      .{{ dl.format }}
+                    <a href="{{ dl.url }}" 
+                       title="Download {{ dl.format }}"
+                       {% if dl.external %}target="_blank" rel="noopener"{% endif %}>
+                      {{ dl.format }}
                     </a>
                   {% endfor %}
                 </div>
@@ -222,42 +208,23 @@ title: Repositorium – DAKODA Infrastruktur
             {% endif %}
           </td>
 
-          {# CHANGED: Source (external links only) #}
+        {% elif key == "speakers_texts" %}
+          {% set combined = corpus.data.speakers_texts %}
+          {% set sp = corpus.data.corpus_subcorpus_sizeLearners %}
+          {% set tx = corpus.data.corpus_subcorpus_sizeTexts %}
           <td>
-            {% set src = corpus.data.source %}
-            {% if src %}
-              <a href="{{ src }}" target="_blank" rel="noopener">Link</a>
+            {% if combined %}
+              {{ combined }}
+            {% elseif sp or tx %}
+              {{ sp or '0' }} / {{ tx or '0' }}
             {% else %}
-              <span>-</span>
+              -
             {% endif %}
           </td>
-
-
-
-{% elif key == "speakers_texts" %}
-  {# Prefer the pre-computed string from corpora.js; fall back to the two size fields #}
-  {% set combined = corpus.data.speakers_texts %}
-  {% set sp = corpus.data.corpus_subcorpus_sizeLearners %}
-  {% set tx = corpus.data.corpus_subcorpus_sizeTexts %}
-  <td>
-    {% if combined %}
-      {{ combined }}
-    {% elseif sp or tx %}
-      {{ sp or '0' }} / {{ tx or '0' }}
-    {% else %}
-      -
-    {% endif %}
-  </td>
-
-
-
 
         {% elif key == "corpus_proficiency_level" %}
           <td>{{ corpus.data.corpus_proficiency_levelMin }}</td>
           <td>{{ corpus.data.corpus_proficiency_levelMax }}</td>
-
-        {% elif key == "ANNOTATION" %}
-          <td><!-- Annotationen --></td>
 
         {% elif key == "corpus_admin_availability" %}
           <td>{{ corpus.data[key] }}</td>
@@ -269,7 +236,7 @@ title: Repositorium – DAKODA Infrastruktur
           <td>{{ corpus.data[key] }}</td>
 
         {% elif key == "corpus_subcorpus_signet" %}
-          <td>{{ corpus.data[key] }}</td>
+          <td class="id-column">{{ corpus.data[key] }}</td>
 
         {% else %}
           <td>{{ corpus.data[key] }}</td>
