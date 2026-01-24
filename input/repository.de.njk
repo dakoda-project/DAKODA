@@ -223,23 +223,23 @@ title: Repositorium – DAKODA Infrastruktur
           </td>
 
         {% elif key == "corpus_proficiency_level" %}
-          <td>{{ corpus.data.corpus_proficiency_levelMin }}</td>
-          <td>{{ corpus.data.corpus_proficiency_levelMax }}</td>
+          <td>{{ corpus.data.corpus_proficiency_levelMin | replace("notAvailable", "-") or '-' }}</td>
+          <td>{{ corpus.data.corpus_proficiency_levelMax | replace("notAvailable", "-") or '-' }}</td>
 
         {% elif key == "corpus_admin_availability" %}
-          <td>{{ corpus.data[key] }}</td>
+          <td>{{ corpus.data[key] | replace("notAvailable", "-") or '-' }}</td>
 
         {% elif key == "corpus_design_l1Type" %}
-          <td>{{ corpus.data[key] }}</td>
+          <td>{{ corpus.data[key] | replace("notAvailable", "-") or '-' }}</td>
 
         {% elif key == "task_interaction_mode" %}
-          <td>{{ corpus.data[key] }}</td>
+          <td>{{ corpus.data[key] | replace("notAvailable", "-") or '-' }}</td>
 
         {% elif key == "corpus_subcorpus_signet" %}
-          <td class="id-column">{{ corpus.data[key] }}</td>
+          <td class="id-column">{{ corpus.data[key] | replace("notAvailable", "-") or '-' }}</td>
 
         {% else %}
-          <td>{{ corpus.data[key] }}</td>
+          <td>{{ corpus.data[key] | replace("notAvailable", "-") or '-' }}</td>
         {% endif %}
       {% endfor %}
     </tr>

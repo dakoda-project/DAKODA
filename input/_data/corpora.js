@@ -25,7 +25,7 @@ function pickCEFR(val) {
   const m = String(val).toUpperCase().match(/A1|A2|B1|B2|C1|C2/);
   return m ? m[0] : undefined;
  }
- 
+
 /* -------------------- detect downloads & build URLs ---------------------- */
 function detectDownloads(meta, fileSlug) {
   const availabilityRaw = String(pick(meta, "corpus_admin_availability", "corpus_admin_access") || "")
@@ -249,19 +249,11 @@ module.exports = () => {
 
                modality: modality || "",
                task_type: meta.task_type || "",
-               size_texts: sizeTexts || "",
-               size_in_tokens: sizeTokens || "",
-               num_learners: sizeLearners || "",
-               proficiency: pick(meta, "corpus_proficiency_levelMax", "corpus_proficiency_level_max") || "",
-               pt_stages_observed: meta.pt_stages_observed || "",
-               access: availability || "",
-               source: srcUrl || "",
-               pid: pick(meta, "corpus_admin_pid_dkd", "corpus_admin_pid") || "",
-               unique_handle: pick(meta, "corpus_admin_URLquery", "corpus_admin_url_query") || "",
-               version: pick(meta, "corpus_admin_version_orig", "corpus_admin_version") || "",
-
-               corpus_proficiency_levelMin: cefrMin || meta.corpus_proficiency_levelMin || "",
-               corpus_proficiency_levelMax: cefrMax || meta.corpus_proficiency_levelMax || "",
+               corpus_admin_availability: availability || "",
+               corpus_design_l1Type: meta.corpus_design_l1Type || "",
+               task_interaction_mode: meta.task_interaction_mode || "",
+               corpus_proficiency_levelMin: cefrMin || meta.corpus_proficiency_levelMin,
+               corpus_proficiency_levelMax: cefrMax || meta.corpus_proficiency_levelMax,
 
                // speakers/texts for templates
                speakers_count,
