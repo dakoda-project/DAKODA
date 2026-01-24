@@ -1106,3 +1106,59 @@ th.sortable.desc .sort-icon {
 @media (prefers-reduced-motion: reduce){
   .highlight-card{ transition:none; }
 }
+
+/* Download dropdown menu */
+.download-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.download-btn {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 0.9em;
+  min-width: 32px;
+}
+
+.download-btn:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
+}
+
+.download-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+  min-width: 100px;
+}
+
+.download-menu:hover .download-dropdown {
+  display: block;
+}
+
+.download-dropdown a {
+  display: block;
+  padding: 8px 12px;
+  color: #0066cc;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9em;
+}
+
+.download-dropdown a:last-child {
+  border-bottom: none;
+}
+
+.download-dropdown a:hover {
+  background-color: #f9f9f9;
+  text-decoration: underline;
+}

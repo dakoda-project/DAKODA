@@ -24,22 +24,59 @@ function pickCEFR(val) {
   if (emptyish(val)) return undefined;
   const m = String(val).toUpperCase().match(/A1|A2|B1|B2|C1|C2/);
   return m ? m[0] : undefined;
-}
-
-/* -------------------- scan DKD download folder for files ------------------ */
-function detectDownloads(corpusFolderName) {
-  const folderPath = path.join(__dirname, "../data", corpusFolderName);
-  const result = { cas_data: "", plain_text: "", metadata_csv: "", source_format: "" };
-  if (!fs.existsSync(folderPath)) return result;
-  const files = fs.readdirSync(folderPath);
-  for (const file of files) {
-    const lower = file.toLowerCase();
-    if (lower.endsWith(".xmi.zip")) result.cas_data = file;
-    else if (lower.endsWith(".txt.zip")) result.plain_text = file;
-    else if (lower.endsWith(".csv") || lower.endsWith(".xlsx")) result.metadata_csv = file;
-    else if (lower.endsWith(".xml") || lower.endsWith(".json")) result.source_format = file;
+ }
+ 
+/* -------------------- detect downloads & build URLs ---------------------- */
+function detectDownloads(meta, fileSlug) {
+  const availabilityRaw = String(pick(meta, "corpus_admin_availability", "corpus_admin_access") || "")
+    .toLowerCase().trim();
+  const availabilityDir = availabilityRaw === "special restrictions" ? "restricted" : availabilityRaw;
+  
+  // Use corpus_subcorpus_signet (matches folder names), fallback to acronym then slug
+  const id = String(pick(meta, "corpus_subcorpus_signet", "corpus_admin_acronym") || "").trim() || fileSlug;
+  
+  // Check if folder exists in repo
+  const folderPath = path.join(__dirname, "../data/repo", availabilityDir, id);
+  const folderExists = fs.existsSync(folderPath);
+  
+  // Return empty if folder doesn't exist
+  if (!folderExists) {
+    return {
+      downloads: [],
+      downloads_folder: "",
+      downloads_base_url: ""
+    };
   }
-  return result;
+  
+  // Base download path
+  const downloadPath = `/data/repo/${availabilityDir}/${id}`;
+  
+  // Build array of available formats
+  const downloads = [];
+  const formats = [
+    { ext: "_xmi.zip", label: "xmi" },
+    { ext: "_txt.zip", label: "txt" },
+    { ext: ".xml", label: "xml" },
+    { ext: ".json", label: "json" }
+  ];
+  
+  for (const fmt of formats) {
+    const fileName = `${id}${fmt.ext}`;
+    const filePath = path.join(folderPath, fileName);
+    if (fs.existsSync(filePath)) {
+      downloads.push({
+        format: fmt.label,
+        url: `${downloadPath}/${fileName}`,
+        fileName: fileName
+      });
+    }
+  }
+  
+  return {
+    downloads: downloads,
+    downloads_folder: id,
+    downloads_base_url: downloadPath
+  };
 }
 
 /* ------------- load speakers/texts from JSON (robust headers) ------------- */
@@ -145,7 +182,7 @@ module.exports = () => {
 
       for (const meta of parsed) {
         // title from old/new schema
-        const title = pick(meta, "corpus_admin_name", "corpus_name");
+        const title = meta["corpus_name"];
         if (emptyish(title)) continue;
 
         const slug = generateSlug(title);
@@ -184,53 +221,53 @@ module.exports = () => {
         const texts_count    = hit ? hit.texts    : "";
         const speakers_texts = hit ? `${speakers_count || 0} / ${texts_count || 0}` : "";
 
-        // detect DKD download files in input/data/<folder>
-        const downloads = detectDownloads(meta.corpus_name || slug);
+        // detect DKD download files (repo layout + fallbacks)
+        const downloads = detectDownloads(meta, slug);
+ 
+         for (const lang of ["de", "en"]) {
+           corpora.push({
+             title,
+             fileSlug: slug,
+             language: lang,
+             data: {
+               ...meta, // keep original fields for templates
 
-        for (const lang of ["de", "en"]) {
-          corpora.push({
-            title,
-            fileSlug: slug,
-            language: lang,
-            data: {
-              ...meta, // keep original fields for templates
+               language: lang,
+               fileSlug: slug,
 
-              language: lang,
-              fileSlug: slug,
+               modality: modality || "",
+               task_type: meta.task_type || "",
+               size_texts: sizeTexts || "",
+               size_in_tokens: sizeTokens || "",
+               num_learners: sizeLearners || "",
+               proficiency: pick(meta, "corpus_proficiency_levelMax", "corpus_proficiency_level_max") || "",
+               pt_stages_observed: meta.pt_stages_observed || "",
+               access: availability || "",
+               source: srcUrl || "",
+               pid: pick(meta, "corpus_admin_pid_dkd", "corpus_admin_pid") || "",
+               unique_handle: pick(meta, "corpus_admin_URLquery", "corpus_admin_url_query") || "",
+               version: pick(meta, "corpus_admin_version_orig", "corpus_admin_version") || "",
 
-              modality: modality || "",
-              task_type: meta.task_type || "",
-              size_texts: sizeTexts || "",
-              size_in_tokens: sizeTokens || "",
-              num_learners: sizeLearners || "",
-              proficiency: pick(meta, "corpus_proficiency_levelMax", "corpus_proficiency_level_max") || "",
-              pt_stages_observed: meta.pt_stages_observed || "",
-              access: availability || "",
-              source: srcUrl || "",
-              pid: pick(meta, "corpus_admin_pid_dkd", "corpus_admin_pid") || "",
-              unique_handle: pick(meta, "corpus_admin_URLquery", "corpus_admin_url_query") || "",
-              version: pick(meta, "corpus_admin_version_orig", "corpus_admin_version") || "",
+               corpus_proficiency_levelMin: cefrMin || meta.corpus_proficiency_levelMin || "",
+               corpus_proficiency_levelMax: cefrMax || meta.corpus_proficiency_levelMax || "",
 
-              corpus_proficiency_levelMin: cefrMin || meta.corpus_proficiency_levelMin || "",
-              corpus_proficiency_levelMax: cefrMax || meta.corpus_proficiency_levelMax || "",
+               // speakers/texts for templates
+               speakers_count,
+               texts_count,
+               speakers_texts,
 
-              // speakers/texts for templates
-              speakers_count,
-              texts_count,
-              speakers_texts,
+               // also overwrite old-size fields if JSON provided values (so existing template block works)
+               corpus_subcorpus_sizeLearners: !emptyish(speakers_count)
+                 ? speakers_count
+                 : (meta.corpus_subcorpus_sizeLearners || ""),
+               corpus_subcorpus_sizeTexts: !emptyish(texts_count)
+                 ? texts_count
+                 : (meta.corpus_subcorpus_sizeTexts || ""),
 
-              // also overwrite old-size fields if JSON provided values (so existing template block works)
-              corpus_subcorpus_sizeLearners: !emptyish(speakers_count)
-                ? speakers_count
-                : (meta.corpus_subcorpus_sizeLearners || ""),
-              corpus_subcorpus_sizeTexts: !emptyish(texts_count)
-                ? texts_count
-                : (meta.corpus_subcorpus_sizeTexts || ""),
-
-              ...downloads,
-            }
-          });
-        }
+               ...downloads,
+             }
+           });
+         }
       }
     } catch (err) {
       console.error("Error parsing corpora.json:", err.message);

@@ -9,9 +9,6 @@ title: Repository – DAKODA Infrastructure
   Select corpora/datasets to download. Some datasets are only available to authenticated users at German universities.
 </p>
 
-<!-- Authentication Button -->
-<button class="auth-btn">Authenticate</button>
-
 <!-- Enhanced Filter Bar -->
 <div class="filter-bar-enhanced">
   <div class="filter-group-enhanced">
@@ -106,10 +103,11 @@ title: Repository – DAKODA Infrastructure
         
         <th rowspan="2" class="sortable" data-sort-key="title" title="{{ key }}">
           {{ display | truncate(35, true, '...') }}
-         Corpus title <span class="sort-icon">↕</span>
+          Corpus title <span class="sort-icon">↕</span>
         </th>
-        {# Split Download into two subcolumns #}
-        <th colspan="2">Download</th>
+        {# CHANGED: single Download column #}
+        <th rowspan="2">Downloads</th>
+        <th rowspan="2">Source</th>
 
       {% elif key == "corpus_subcorpus_signet" %}
         {# Rename to ID #}
@@ -195,31 +193,20 @@ title: Repository – DAKODA Infrastructure
             </a>
           </td>
 
-          {# DKD (left) #}
+          {# CHANGED: Downloads (dropdown for compactness) #}
           <td>
-            {% set access = corpus.data.corpus_admin_availability | lower %}
-            {% set cas = corpus.data.cas_data %}
-            {% set txt = corpus.data.plain_text %}
-            {% set meta = corpus.data.metadata_csv %}
-            {% set hasDkd = cas or txt or meta %}
-
-            {% if access == "open" and hasDkd %}
-              <div class="dropdown">
-                <button class="dropdown-btn">⤓</button>
-                <div class="dropdown-content">
-                  {% if meta %}
-                    {% if meta | lower | endswith(".xlsx") %}
-                      <a href="/data/{{ corpus.fileSlug }}/{{ meta }}">Excel</a>
-                    {% else %}
-                      <a href="/data/{{ corpus.fileSlug }}/{{ meta }}">CSV</a>
-                    {% endif %}
-                  {% endif %}
-                  {% if txt %}
-                    <a href="/data/{{ corpus.fileSlug }}/{{ txt }}">Text</a>
-                  {% endif %}
-                  {% if cas %}
-                    <a href="/data/{{ corpus.fileSlug }}/{{ cas }}">XMI</a>
-                  {% endif %}
+            {% set downloads = corpus.data.downloads %}
+            {% if downloads and downloads.length > 0 %}
+              <div class="download-menu">
+                <button class="download-btn" title="Available formats" aria-label="Download formats">
+                  ⬇
+                </button>
+                <div class="download-dropdown">
+                  {% for dl in downloads %}
+                    <a href="{{ dl.url }}" title="Download {{ dl.format }}">
+                      .{{ dl.format }}
+                    </a>
+                  {% endfor %}
                 </div>
               </div>
             {% else %}
@@ -227,12 +214,10 @@ title: Repository – DAKODA Infrastructure
             {% endif %}
           </td>
 
-          {# SRC (right) #}
+          {# CHANGED: Source (external links only) #}
           <td>
-            {% set access = corpus.data.corpus_admin_availability | lower %}
-            {% set srcRaw = corpus.data.source %}
-            {% set src = srcRaw %}
-            {% if access == "open" and src %}
+            {% set src = corpus.data.source %}
+            {% if src %}
               <a href="{{ src }}" target="_blank" rel="noopener">Link</a>
             {% else %}
               <span>-</span>

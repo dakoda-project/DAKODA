@@ -10,7 +10,9 @@
   <header class="site-header">
     <div class="header-content">
       <div class="branding">
-        <img src="/css/img/logo.png" alt="DAKODA Logo" class="logo" />
+        <a href="index.de.html" title="Zur Startseite">
+          <img src="/css/img/logo.png" alt="DAKODA Logo" class="logo" />
+        </a>
         <h1 class="site-title"><span>DAKODA</span> Infrastructure</h1>
       </div>
 
@@ -61,12 +63,10 @@
 
 <script defer>
   document.addEventListener('DOMContentLoaded', () => {
-    // Generische UI initialisieren
     if (window.DAKODA?.ui?.init) {
       window.DAKODA.ui.init();
     }
 
-    // Tabellenlogik nur initialisieren, wenn Tabelle vorhanden ist
     if (document.getElementById('repoTable') && window.DAKODA?.table?.initRepoTable) {
       window.DAKODA.table.initRepoTable();
     }
