@@ -1001,7 +1001,7 @@ th.sortable.desc .sort-icon {
 
 .grid-area{
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto 2rem auto;
   padding: 0 1rem;
 }
 
@@ -1167,4 +1167,54 @@ th.sortable.desc .sort-icon {
 .repo-table td[data-id-col],
 .repo-table td.id-column {
   white-space: nowrap;
+}
+
+.team-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2em;
+  max-width: 800px;
+}
+
+.team-organization {
+  padding-left: 0;
+}
+
+.team-organization h4 {
+  margin: 0 0 0.75em 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.team-members {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.team-members li {
+  margin-bottom: 0.2rem;  /* Much tighter than the default 0.5rem */
+  padding: 0.15rem 0;
+  padding-left: 1.5em;
+  position: relative;
+}
+
+.team-members li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #d32f2f;
+}
+
+.role {
+  font-size: 0.9em;
+  color: #666;
+  font-weight: normal;
+}
+
+@media (max-width: 600px) {
+  .team-list {
+    grid-template-columns: 1fr;
+    gap: 1.5em;
+  }
 }

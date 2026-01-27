@@ -13,6 +13,16 @@ module.exports = function (eleventyConfig) {
   ].forEach(dir => eleventyConfig.addPassthroughCopy(dir));
   eleventyConfig.addPassthroughCopy({ "input/static/_redirects": "_redirects" });
   
+  eleventyConfig.addPassthroughCopy({
+    "node_modules/d3/dist/d3.min.js": "vendor/d3.min.js",
+  });
+  eleventyConfig.addPassthroughCopy({
+    "node_modules/markmap-lib/dist/browser/index.iife.js": "vendor/markmap-lib.min.js",
+  });
+  eleventyConfig.addPassthroughCopy({
+    "node_modules/markmap-view/dist/browser/index.js": "vendor/markmap-view.min.js",
+  });
+
   eleventyConfig.addFilter("slugifyCorpus", function (value) {
     return value
       .toLowerCase()

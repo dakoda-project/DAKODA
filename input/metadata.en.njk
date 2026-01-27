@@ -1,0 +1,153 @@
+---
+layout: base.njk
+permalink: metadata.en.html
+title: Metadata Scheme
+---
+
+<style>
+  .mindmap-wrapper {
+    margin: 20px 0;
+  }
+
+  .mindmap-container {
+    width: 100%;
+    height: 800px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+  }
+
+  .controls {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+  }
+
+  .btn:hover {
+    background: #1565c0;
+  }
+
+  .info-box {
+    background: #f5f5f5;
+    border-left: 4px solid #1976d2;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+
+  .info-box h3 {
+    margin-top: 0;
+    color: #1565c0;
+  }
+
+  .info-box code {
+    background: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .controls {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .mindmap-container {
+      height: 600px;
+    }
+  }
+</style>
+
+<section class="card">
+  <h1>DAKODA Metadata Scheme</h1>
+  <p>
+    Explore the hierarchical structure of the DAKODA metadata schema interactively.
+    Click the arrows or nodes to expand or collapse. Use mouse wheel to zoom and drag to navigate.
+  </p>
+</section>
+
+<section class="mindmap-wrapper">
+  <div class="controls">
+    <button class="btn" onclick="zoomIn()">🔍 Zoom +</button>
+    <button class="btn" onclick="zoomOut()">🔍 Zoom -</button>
+    <button class="btn" onclick="resetView()">⟲ Reset</button>
+  </div>
+
+  <div id="mindmap-container" class="mindmap-container"></div>
+</section>
+
+<section class="card info-box">
+  <h3>Usage</h3>
+  <ul>
+    <li><strong>Click on arrows:</strong> Expand/collapse nodes</li>
+    <li><strong>Mouse wheel:</strong> Zoom</li>
+    <li><strong>Drag & drop:</strong> Pan the map</li>
+    <li><strong>Double-click:</strong> Focus on a node</li>
+  </ul>
+</section>
+
+<script src="/vendor/d3.min.js"></script>
+<script src="/vendor/markmap-lib.min.js"></script>
+<script src="/vendor/markmap-view.min.js"></script>
+
+<script>
+  let mm = null;
+
+  async function loadSchemaAndRender() {
+    try {
+      const response = await fetch('/data/metadata-schema-mindmap.md');
+      if (!response.ok) {
+        throw new Error(`Failed to load schema: ${response.status}`);
+      }
+      const markdown = await response.text();
+
+      const transformer = new window.markmap.Transformer();
+      const { root } = transformer.transform(markdown);
+
+      const svg = document.getElementById('markmap');
+      mm = window.markmap.Markmap.create(svg, { initialExpandLevel: 2 }, root);
+      mm.fit();
+    } catch (error) {
+      console.error('Error:', error);
+      showError(error.message);
+    }
+  }
+
+  function showError(message) {
+    const svg = document.getElementById('markmap');
+    svg.parentElement.innerHTML =
+      `<div class="error"><strong>Fehler:</strong> ${message}</div>`;
+  }
+
+  function zoomIn() {
+    if (mm) mm.setZoom(mm.getZoom() * 1.2);
+  }
+
+  function zoomOut() {
+    if (mm) mm.setZoom(mm.getZoom() / 1.2);
+  }
+
+  function resetView() {
+    if (mm) mm.fit();
+  }
+
+  window.zoomIn = zoomIn;
+  window.zoomOut = zoomOut;
+  window.resetView = resetView;
+
+  document.addEventListener('DOMContentLoaded', loadSchemaAndRender);
+</script>

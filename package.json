@@ -17,11 +17,15 @@
     "fernuni-hagen"
   ],
   "engines": {
-     "node":"^18 || ^20"
-   },  
-   "devDependencies": {
-     "@11ty/eleventy":"^3", 
-     "rimraf":"^5", 
-     "serve":"^14"
-   }
+    "node": "^18 || ^20"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3",
+    "rimraf": "^5",
+    "serve": "^14"
+  },
+  "dependencies": {
+    "markmap-lib": "^0.18.12",
+    "markmap-view": "^0.18.12"
+  }
 }

@@ -1,0 +1,234 @@
+---
+layout: base.njk
+permalink: metadata.de.html
+title: Metadaten Schema
+---
+
+<style>
+  .mindmap-wrapper {
+    margin: 20px 0;
+  }
+
+  #markmap {
+    width: 100%;
+    height: 800px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+  }
+
+  .controls {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+  }
+
+  .btn:hover {
+    background: #1565c0;
+  }
+
+  .info-box {
+    background: #f5f5f5;
+    border-left: 4px solid #1976d2;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+
+  .info-box h3 {
+    margin-top: 0;
+    color: #1565c0;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+  }
+
+  .error {
+    background: #ffebee;
+    border-left: 4px solid #d32f2f;
+    padding: 15px;
+    border-radius: 4px;
+    color: #d32f2f;
+  }
+
+  @media (max-width: 768px) {
+    .controls {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    #markmap {
+      height: 600px;
+    }
+  }
+</style>
+
+<section class="card">
+  <h1>DAKODA Metadaten Schema</h1>
+  <p>
+    Erkunden Sie die hierarchische Struktur des DAKODA-Metadaten-Schemas interaktiv.
+    Klicken Sie auf die Knoten, um diese zu erweitern oder einzuklappen.
+    Verwenden Sie Mausrad zum Zoomen und Drag zum Navigieren.
+  </p>
+</section>
+
+<section class="mindmap-wrapper">
+  <div class="controls">
+    <button class="btn" onclick="zoomIn()">🔍 Zoom +</button>
+    <button class="btn" onclick="zoomOut()">🔍 Zoom -</button>
+    <button class="btn" onclick="resetView()">⟲ Zurücksetzen</button>
+  </div>
+
+  <svg id="markmap"></svg>
+</section>
+
+<section class="card info-box">
+  <h3>Verwendung</h3>
+  <ul>
+    <li><strong>Klicken auf Knoten:</strong> Erweitern/einklappen</li>
+    <li><strong>Mausrad:</strong> Zoomen</li>
+    <li><strong>Drag & Drop:</strong> Karte verschieben</li>
+  </ul>
+</section>
+
+<script src="/vendor/d3.min.js"></script>
+<script src="/vendor/markmap-lib.min.js"></script>
+<script src="/vendor/markmap-view.min.js"></script>
+
+<script>
+  let mm = null;
+
+  // Define the color palette for main branches
+  const basePalette = [
+    '#FF6B6B',  // red
+    '#4ECDC4',  // teal
+    '#45B7D1',  // blue
+    '#FFA07A',  // salmon
+    '#98D8C8',  // mint
+    '#F7DC6F',  // yellow
+    '#BB8FCE',  // purple
+    '#85C1E2',  // light blue
+    '#F8A868',  // orange
+    '#DA70D6',  // magenta
+    '#72D4D4',  // cyan
+    '#C9B456',  // gold
+    '#7CB9E8',  // cornflower
+  ];
+
+  // Map to store base color for each first-level branch
+  const branchBaseColors = new Map();
+
+  function lightenColor(hex, amount) {
+    const num = parseInt(hex.slice(1), 16);
+    if (Number.isNaN(num)) return hex;
+
+    let r = (num >> 16) & 0xff;
+    let g = (num >> 8) & 0xff;
+    let b = num & 0xff;
+
+    r = Math.min(255, Math.max(0, r + amount));
+    g = Math.min(255, Math.max(0, g + amount));
+    b = Math.min(255, Math.max(0, b + amount));
+
+    return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+  }
+
+  function colorNode(node) {
+    const depth = node.state?.depth || 0;
+
+    // Root: neutral grey
+    if (depth === 0) {
+      return '#424242';
+    }
+
+    // Find the top-level ancestor (depth 1)
+    let current = node;
+    while (current.parent && (current.parent.state?.depth || 0) > 0) {
+      current = current.parent;
+    }
+
+    // Get or assign base color for this branch
+    if (!branchBaseColors.has(current)) {
+      const base = basePalette[branchBaseColors.size % basePalette.length];
+      branchBaseColors.set(current, base);
+    }
+    const baseColor = branchBaseColors.get(current);
+
+    // For deeper levels, lighten progressively
+    const levelsBelowFirst = depth - 1;
+    const lightenAmount = levelsBelowFirst * 20;
+    return lightenColor(baseColor, lightenAmount);
+  }
+
+  async function loadSchemaAndRender() {
+    try {
+      const response = await fetch('/data/metadata-schema-mindmap.md');
+      if (!response.ok) {
+        throw new Error(`Failed to load schema: ${response.status}`);
+      }
+      const markdown = await response.text();
+
+      const transformer = new window.markmap.Transformer();
+      const { root } = transformer.transform(markdown);
+
+      const svg = document.getElementById('markmap');
+      
+      // Create options with color function
+      const options = {
+        initialExpandLevel: 2,
+        color: colorNode
+      };
+      
+      mm = window.markmap.Markmap.create(svg, options, root);
+      mm.fit();
+    } catch (error) {
+      console.error('Error:', error);
+      showError(error.message);
+    }
+  }
+
+  function showError(message) {
+    const svg = document.getElementById('markmap');
+    svg.parentElement.innerHTML =
+      `<div class="error"><strong>Fehler:</strong> ${message}</div>`;
+  }
+
+  function zoomIn() {
+    if (mm) {
+      mm.rescale(1.2);
+    }
+  }
+
+  function zoomOut() {
+    if (mm) {
+      mm.rescale(1 / 1.2);
+    }
+  }
+
+  function resetView() {
+    if (mm) {
+      mm.fit();
+    }
+  }
+
+  window.zoomIn = zoomIn;
+  window.zoomOut = zoomOut;
+  window.resetView = resetView;
+
+  document.addEventListener('DOMContentLoaded', loadSchemaAndRender);
+</script>
