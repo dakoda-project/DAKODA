@@ -195,11 +195,11 @@ title: Repositorium – DAKODA Infrastruktur
                 </button>
                 <div class="download-dropdown">
                   {% for dl in downloads %}
-                    <a href="{{ dl.url }}" 
-                       title="Download {{ dl.format }}"
-                       {% if dl.external %}target="_blank" rel="noopener"{% endif %}>
-                      {{ dl.format }}
-                    </a>
+                      <a href="{{ dl.url }}"
+                        title="Download {{ dl.format }}"
+                        {% if dl.external or dl.type == "download" %} target="_blank" rel="noopener"{% endif %}>
+                        {{ dl.format }}
+                      </a>
                   {% endfor %}
                 </div>
               </div>
