@@ -35,19 +35,6 @@ function detectDownloads(meta, fileSlug) {
   // Use corpus_subcorpus_signet (matches folder names), fallback to acronym then slug
   const id = String(pick(meta, "corpus_subcorpus_signet", "corpus_admin_acronym") || "").trim() || fileSlug;
   
-  // Check if folder exists in repo
-  const folderPath = path.join(__dirname, "../data/repo", availabilityDir, id);
-  const folderExists = fs.existsSync(folderPath);
-  
-  // Return empty if folder doesn't exist
-  if (!folderExists) {
-    return {
-      downloads: [],
-      downloads_folder: "",
-      downloads_base_url: ""
-    };
-  }
-  
   // Base download path
   const downloadPath = `/data/repo/${availabilityDir}/${id}`;
   
@@ -62,7 +49,7 @@ function detectDownloads(meta, fileSlug) {
   
   for (const fmt of formats) {
     const fileName = `${id}${fmt.ext}`;
-    const filePath = path.join(folderPath, fileName);
+    const filePath = path.join(__dirname, "../data/repo", availabilityDir, id, fileName);
     if (fs.existsSync(filePath)) {
       downloads.push({
         format: fmt.label,

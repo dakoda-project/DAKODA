@@ -109,10 +109,8 @@ title: Metadaten Schema
 <script src="/vendor/d3.min.js"></script>
 <script src="/vendor/markmap-lib.min.js"></script>
 <script src="/vendor/markmap-view.min.js"></script>
-
 <script>
   let mm = null;
-
   // Define the color palette for main branches
   const basePalette = [
     '#FF6B6B',  // red
@@ -129,63 +127,80 @@ title: Metadaten Schema
     '#C9B456',  // gold
     '#7CB9E8',  // cornflower
   ];
-
-  // Map to store base color for each first-level branch
-  const branchBaseColors = new Map();
-
+  
+  // Map to store assigned color for each node
+  const nodeColors = new Map();
+  
   function lightenColor(hex, amount) {
     const num = parseInt(hex.slice(1), 16);
     if (Number.isNaN(num)) return hex;
-
     let r = (num >> 16) & 0xff;
     let g = (num >> 8) & 0xff;
     let b = num & 0xff;
-
     r = Math.min(255, Math.max(0, r + amount));
     g = Math.min(255, Math.max(0, g + amount));
     b = Math.min(255, Math.max(0, b + amount));
-
     return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
   }
-
-  function colorNode(node) {
-    const depth = node.state?.depth || 0;
-
-    // Root: neutral grey
+  
+  function assignColorsToTree(node, depth = 0, baseColor = null, branchIndex = 0) {
+    const nodeKey = node.content || node.value || '';
+    
+    // Root node
     if (depth === 0) {
-      return '#424242';
+      nodeColors.set(nodeKey, '#424242');
+      if (node.children) {
+        node.children.forEach((child, index) => {
+          assignColorsToTree(child, 1, basePalette[index % basePalette.length], index);
+        });
+      }
+      return;
     }
-
-    // Find the top-level ancestor (depth 1)
-    let current = node;
-    while (current.parent && (current.parent.state?.depth || 0) > 0) {
-      current = current.parent;
+    
+    // First level - assign base color
+    if (depth === 1) {
+      nodeColors.set(nodeKey, baseColor);
+      if (node.children) {
+        node.children.forEach(child => {
+          assignColorsToTree(child, depth + 1, baseColor, branchIndex);
+        });
+      }
+      return;
     }
-
-    // Get or assign base color for this branch
-    if (!branchBaseColors.has(current)) {
-      const base = basePalette[branchBaseColors.size % basePalette.length];
-      branchBaseColors.set(current, base);
+    
+    // Deeper levels - lighten the base color
+    const lightenAmount = (depth - 1) * 20;
+    const color = lightenColor(baseColor, lightenAmount);
+    nodeColors.set(nodeKey, color);
+    
+    if (node.children) {
+      node.children.forEach(child => {
+        assignColorsToTree(child, depth + 1, baseColor, branchIndex);
+      });
     }
-    const baseColor = branchBaseColors.get(current);
-
-    // For deeper levels, lighten progressively
-    const levelsBelowFirst = depth - 1;
-    const lightenAmount = levelsBelowFirst * 20;
-    return lightenColor(baseColor, lightenAmount);
   }
-
+  
+  function colorNode(node) {
+    const nodeKey = node.content || node.value || '';
+    return nodeColors.get(nodeKey) || '#424242';
+  }
+  
   async function loadSchemaAndRender() {
     try {
+      // Clear the color map
+      nodeColors.clear();
+      
       const response = await fetch('/data/metadata-schema-mindmap.md');
       if (!response.ok) {
         throw new Error(`Failed to load schema: ${response.status}`);
       }
       const markdown = await response.text();
-
       const transformer = new window.markmap.Transformer();
       const { root } = transformer.transform(markdown);
-
+      
+      // Pre-assign colors to all nodes
+      assignColorsToTree(root);
+      
       const svg = document.getElementById('markmap');
       
       // Create options with color function
@@ -201,34 +216,30 @@ title: Metadaten Schema
       showError(error.message);
     }
   }
-
+  
   function showError(message) {
     const svg = document.getElementById('markmap');
     svg.parentElement.innerHTML =
       `<div class="error"><strong>Fehler:</strong> ${message}</div>`;
   }
-
+  
   function zoomIn() {
     if (mm) {
       mm.rescale(1.2);
     }
   }
-
   function zoomOut() {
     if (mm) {
       mm.rescale(1 / 1.2);
     }
   }
-
   function resetView() {
     if (mm) {
       mm.fit();
     }
   }
-
   window.zoomIn = zoomIn;
   window.zoomOut = zoomOut;
   window.resetView = resetView;
-
   document.addEventListener('DOMContentLoaded', loadSchemaAndRender);
 </script>
