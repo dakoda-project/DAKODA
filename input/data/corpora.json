@@ -4096,7 +4096,7 @@
   },
   {
     "corpus_name": "KLP1-L2",
-    "corpus_admin_acronym": "Kolipsi 1",
+    "corpus_admin_acronym": "Kolipsi-1-L2",
     "corpus_admin_author": "Glaznieks, Aivars; Frey, Jennifer-Carmen; Nicolas, Lionel; Abel, Andrea; Vettori, Chiara",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -4227,7 +4227,7 @@
   },
   {
     "corpus_name": "KLP1-Lx",
-    "corpus_admin_acronym": "Kolipsi 1",
+    "corpus_admin_acronym": "Kolipsi-1-Lx",
     "corpus_admin_author": "Glaznieks, Aivars; Frey, Jennifer-Carmen; Nicolas, Lionel; Abel, Andrea; Vettori, Chiara",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -4358,7 +4358,7 @@
   },
   {
     "corpus_name": "KOKO-L1",
-    "corpus_admin_acronym": "KoKo",
+    "corpus_admin_acronym": "KoKo-L1",
     "corpus_admin_author": "Abel, Andrea",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -4461,7 +4461,7 @@
   },
   {
     "corpus_name": "KOKO-Lx",
-    "corpus_admin_acronym": "KoKo",
+    "corpus_admin_acronym": "KoKo-Lx",
     "corpus_admin_author": "Abel, Andrea",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -4564,7 +4564,7 @@
   },
   {
     "corpus_name": "LEON-L1",
-    "corpus_admin_acronym": "LEONIDE",
+    "corpus_admin_acronym": "LEONIDE-L1",
     "corpus_admin_author": "Glaznieks, Aivars; Frey, Jennifer-Carmen; Stopfner, Maria; Zanasi, Lorenzo; Nicolas, Lionel  ",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -4835,7 +4835,7 @@
   },
   {
     "corpus_name": "LEON-L2",
-    "corpus_admin_acronym": "LEONIDE",
+    "corpus_admin_acronym": "LEONIDE-L2",
     "corpus_admin_author": "Glaznieks, Aivars; Frey, Jennifer-Carmen; Stopfner, Maria; Zanasi, Lorenzo; Nicolas, Lionel  ",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -5601,7 +5601,7 @@
   },
   {
     "corpus_name": "MULT-L1",
-    "corpus_admin_acronym": "MULTILIT",
+    "corpus_admin_acronym": "MULTILIT-L1",
     "corpus_admin_author": "Schroeder, Christoph; Schellhard, Christin ",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -5788,7 +5788,7 @@
   },
   {
     "corpus_name": "MULT-Lx",
-    "corpus_admin_acronym": "MULTILIT",
+    "corpus_admin_acronym": "MULTILIT-Lx",
     "corpus_admin_author": "Schroeder, Christoph; Schellhard, Christin ",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -5975,7 +5975,7 @@
   },
   {
     "corpus_name": "OSNA-L1",
-    "corpus_admin_acronym": "Osnabrücker Bildergeschichtenkorpus",
+    "corpus_admin_acronym": "Osnabrücker Bildergeschichtenkorpus L1",
     "corpus_admin_author": "Thelen, Tobias ",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -6106,7 +6106,7 @@
   },
   {
     "corpus_name": "OSNA-L2",
-    "corpus_admin_acronym": "Osnabrücker Bildergeschichtenkorpus",
+    "corpus_admin_acronym": "Osnabrücker Bildergeschichtenkorpus L2",
     "corpus_admin_author": "Thelen, Tobias ",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -6237,7 +6237,7 @@
   },
   {
     "corpus_name": "OSNA-Lx",
-    "corpus_admin_acronym": "Osnabrücker Bildergeschichtenkorpus",
+    "corpus_admin_acronym": "Osnabrücker Bildergeschichtenkorpus Lx",
     "corpus_admin_author": "Thelen, Tobias ",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -6311,7 +6311,7 @@
   },
   {
     "corpus_name": "PETE-L1",
-    "corpus_admin_acronym": "Petersen-Korpus ",
+    "corpus_admin_acronym": "Petersen-Korpus L1",
     "corpus_admin_author": "Petersen, Inger ",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -6442,7 +6442,7 @@
   },
   {
     "corpus_name": "PETE-L2",
-    "corpus_admin_acronym": "Petersen-Korpus ",
+    "corpus_admin_acronym": "Petersen-Korpus L2",
     "corpus_admin_author": "Petersen, Inger ",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -6573,7 +6573,7 @@
   },
   {
     "corpus_name": "RUEG-HL",
-    "corpus_admin_acronym": "RUEG ",
+    "corpus_admin_acronym": "RUEG HL",
     "corpus_admin_author": "Klotz, Martin",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -6788,7 +6788,7 @@
   },
   {
     "corpus_name": "RUEG-L1",
-    "corpus_admin_acronym": "RUEG ",
+    "corpus_admin_acronym": "RUEG L1",
     "corpus_admin_author": "Klotz, Martin",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -7003,7 +7003,7 @@
   },
   {
     "corpus_name": "RUEG-Lx",
-    "corpus_admin_acronym": "RUEG ",
+    "corpus_admin_acronym": "RUEG Lx",
     "corpus_admin_author": "Klotz, Martin",
     "corpus_admin_availability": "open",
     "corpus_admin_citationDocument": "notAvailable",
@@ -7218,7 +7218,7 @@
   },
   {
     "corpus_name": "SWIK-L1",
-    "corpus_admin_acronym": "SWIKO",
+    "corpus_admin_acronym": "SWIKO L1",
     "corpus_admin_author": "Studer, Thomas; Hicks, Nina  ",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -7517,7 +7517,7 @@
   },
   {
     "corpus_name": "SWIK-L2",
-    "corpus_admin_acronym": "SWIKO",
+    "corpus_admin_acronym": "SWIKO L2",
     "corpus_admin_author": "Studer, Thomas; Hicks, Nina  ",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
@@ -7816,7 +7816,7 @@
   },
   {
     "corpus_name": "SWIK-Lx",
-    "corpus_admin_acronym": "SWIKO",
+    "corpus_admin_acronym": "SWIKO Lx",
     "corpus_admin_author": "Studer, Thomas; Hicks, Nina  ",
     "corpus_admin_availability": "restricted",
     "corpus_admin_citationDocument": "notAvailable",
