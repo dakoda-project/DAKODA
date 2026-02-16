@@ -216,7 +216,7 @@ title: Metadaten
         throw new Error(`Failed to load schema: ${response.status}`);
       }
       const markdown = await response.text();
-      const transformer = new window.markmap.Transformer();
+      const transformer = new window.markmapLib.Transformer();
       const { root } = transformer.transform(markdown);
       
       // Pre-assign colors to all nodes
