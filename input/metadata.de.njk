@@ -126,7 +126,6 @@ title: Metadaten
   <svg id="markmap"></svg>
 </section>
 
-
 <script src="/vendor/d3.min.js"></script>
 <script src="/vendor/markmap-lib.min.js"></script>
 <script src="/vendor/markmap-view.min.js"></script>
@@ -216,7 +215,7 @@ title: Metadaten
         throw new Error(`Failed to load schema: ${response.status}`);
       }
       const markdown = await response.text();
-      const transformer = new window.markmapLib.Transformer();
+      const transformer = new window.markmap.Transformer();
       const { root } = transformer.transform(markdown);
       
       // Pre-assign colors to all nodes
@@ -264,3 +263,5 @@ title: Metadaten
   window.resetView = resetView;
   document.addEventListener('DOMContentLoaded', loadSchemaAndRender);
 </script>
+
+
