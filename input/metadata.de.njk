@@ -11,10 +11,17 @@ title: Metadaten
 
   #markmap {
     width: 100%;
-    height: 800px;
+    height: 600px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background: white;
+  }
+  
+  #markmap text { font-size: 13px; }
+
+  #markmap {
+    transform: scale(0.85);
+    transform-origin: top left;
   }
 
   .controls {
@@ -81,18 +88,18 @@ title: Metadaten
 <section class="grid-area">
   <div class="highlight-grid">
     <div class="highlight-card">
-      <h3>Metadatenschema herunterladen</h3>
+      <h3>Download Metadata Schema</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
         <a href="/data/Dakoda_Metadata_Schema_v1.1.xlsx" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
-          Metadatenschema (.xlsx)
+          Metadata Schema (.xlsx)
         </a>
         <a href="/data/Dakoda_Metadata_Schema_v1.1.csv" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
-          Metadatenschema (.csv)
+          Metadata Schema (.csv)
         </a>
       </div>
     </div>
     <div class="highlight-card">
-      <h3>Metadatenschema Repositorium</h3>
+      <h3>Metadata Schema Project</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
         <a href="https://github.com/dakoda-project/xmlmetadata" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
           Github
@@ -102,11 +109,14 @@ title: Metadaten
 </section>
 
 <section class="card">
-  <h1>DAKODA-Metadatenschema</h1>
+  <h1>DAKODA Metadaten Schema</h1>
   <p>
-    Erkunden Sie die hierarchische Struktur des DAKODA-Metadatenschemas in der interaktiven Mindmap.
+    Erkunden Sie die hierarchische Struktur des DAKODA-Metadaten-Schemas interaktiv.
+    Klicken Sie auf die Knoten, um diese zu erweitern oder einzuklappen.
+    Verwenden Sie Mausrad zum Zoomen und Drag zum Navigieren.
   </p>
 </section>
+
 <section class="card info-box">
   <h3>Verwendung</h3>
   <ul>
@@ -125,6 +135,7 @@ title: Metadaten
 
   <svg id="markmap"></svg>
 </section>
+
 
 <script src="/vendor/d3.min.js"></script>
 <script src="/vendor/markmap-lib.min.js"></script>
@@ -226,11 +237,14 @@ title: Metadaten
       // Create options with color function
       const options = {
         initialExpandLevel: 2,
+        spacingVertical: 10,
+        spacingHorizontal: 80,
         color: colorNode
       };
       
       mm = window.markmap.Markmap.create(svg, options, root);
       mm.fit();
+      mm.rescale(0.85);
     } catch (error) {
       console.error('Error:', error);
       showError(error.message);
@@ -263,5 +277,3 @@ title: Metadaten
   window.resetView = resetView;
   document.addEventListener('DOMContentLoaded', loadSchemaAndRender);
 </script>
-
-
