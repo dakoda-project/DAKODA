@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 permalink: metadata.de.html
-title: Metadaten Schema
+title: Metadaten
 ---
 
 <style>
@@ -81,18 +81,18 @@ title: Metadaten Schema
 <section class="grid-area">
   <div class="highlight-grid">
     <div class="highlight-card">
-      <h3>Download Metadata Schema</h3>
+      <h3>Metadatenschema herunterladen</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
         <a href="/data/Dakoda_Metadata_Schema_v1.1.xlsx" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
-          Metadata Schema (.xlsx)
+          Metadatenschema (.xlsx)
         </a>
         <a href="/data/Dakoda_Metadata_Schema_v1.1.csv" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
-          Metadata Schema (.csv)
+          Metadatenschema (.csv)
         </a>
       </div>
     </div>
     <div class="highlight-card">
-      <h3>Metadata Schema Project</h3>
+      <h3>Metadatenschema Repositorium</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
         <a href="https://github.com/dakoda-project/xmlmetadata" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
           Github
@@ -102,12 +102,18 @@ title: Metadaten Schema
 </section>
 
 <section class="card">
-  <h1>DAKODA Metadaten Schema</h1>
+  <h1>DAKODA-Metadatenschema</h1>
   <p>
-    Erkunden Sie die hierarchische Struktur des DAKODA-Metadaten-Schemas interaktiv.
-    Klicken Sie auf die Knoten, um diese zu erweitern oder einzuklappen.
-    Verwenden Sie Mausrad zum Zoomen und Drag zum Navigieren.
+    Erkunden Sie die hierarchische Struktur des DAKODA-Metadatenschemas in der interaktiven Mindmap.
   </p>
+</section>
+<section class="card info-box">
+  <h3>Verwendung</h3>
+  <ul>
+    <li><strong>Klicken auf Knoten:</strong> Erweitern/einklappen</li>
+    <li><strong>Mausrad:</strong> Zoomen</li>
+    <li><strong>Drag & Drop:</strong> Karte verschieben</li>
+  </ul>
 </section>
 
 <section class="mindmap-wrapper">
@@ -118,15 +124,6 @@ title: Metadaten Schema
   </div>
 
   <svg id="markmap"></svg>
-</section>
-
-<section class="card info-box">
-  <h3>Verwendung</h3>
-  <ul>
-    <li><strong>Klicken auf Knoten:</strong> Erweitern/einklappen</li>
-    <li><strong>Mausrad:</strong> Zoomen</li>
-    <li><strong>Drag & Drop:</strong> Karte verschieben</li>
-  </ul>
 </section>
 
 <script src="/vendor/d3.min.js"></script>
@@ -266,3 +263,5 @@ title: Metadaten Schema
   window.resetView = resetView;
   document.addEventListener('DOMContentLoaded', loadSchemaAndRender);
 </script>
+
+
