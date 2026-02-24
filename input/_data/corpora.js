@@ -43,8 +43,11 @@ function detectDownloads(meta, fileSlug) {
   const formats = [
     { ext: "_xmi.zip", label: "xmi" },
     { ext: "_txt.zip", label: "txt" },
+    { ext: "_meta.zip", label: "meta" },
+    { ext: "_tei.zip", label: "tei" },
+    { ext: "_exb.zip", label: "exb" },
     { ext: ".xml", label: "xml" },
-    { ext: ".json", label: "json" }
+    { ext: ".json", label: "json" },
   ];
   
   for (const fmt of formats) {
