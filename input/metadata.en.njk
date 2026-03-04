@@ -4,90 +4,34 @@ permalink: metadata.en.html
 title: Metadata Scheme
 ---
 
-<style>
-  .mindmap-wrapper {
-    margin: 20px 0;
-  }
-
-  .mindmap-container {
-    width: 100%;
-    height: 800px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: white;
-    overflow: hidden;
-  }
-
-  .controls {
-    margin: 15px 0;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .btn {
-    padding: 8px 16px;
-    background: #1976d2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.3s ease;
-  }
-
-  .btn:hover {
-    background: #1565c0;
-  }
-
-  .info-box {
-    background: #f5f5f5;
-    border-left: 4px solid #1976d2;
-    padding: 15px;
-    border-radius: 4px;
-    margin: 20px 0;
-  }
-
-  .info-box h3 {
-    margin-top: 0;
-    color: #1565c0;
-  }
-
-  .info-box code {
-    background: white;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 13px;
-  }
-
-  @media (max-width: 768px) {
-    .controls {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .mindmap-container {
-      height: 600px;
-    }
-  }
-</style>
+<section class="grid-area">
+  <div class="highlight-grid">
+    <div class="highlight-card">
+      <h3>Download Metadata Scheme</h3>
+      <div class="metadata-download-container">
+        <a href="/data/Dakoda_Metadata_Schema_v1.1.xlsx" download class="metadata-download-link">
+          Metadata Scheme (.xlsx)
+        </a>
+        <a href="/data/Dakoda_Metadata_Schema_v1.1.csv" download class="metadata-download-link">
+          Metadata Scheme (.csv)
+        </a>
+      </div>
+    </div>
+    <div class="highlight-card">
+      <h3>Metadata Repository</h3>
+      <div class="metadata-download-container">
+        <a href="https://github.com/dakoda-project/xmlmetadata" download class="metadata-download-link">
+          Github
+        </a>
+      </div>
+    </div>
+</section>
 
 <section class="card">
   <h1>DAKODA Metadata Scheme</h1>
   <p>
     Explore the hierarchical structure of the DAKODA metadata schema interactively.
-    Click the arrows or nodes to expand or collapse. Use mouse wheel to zoom and drag to navigate.
   </p>
-</section>
-
-<section class="mindmap-wrapper">
-  <div class="controls">
-    <button class="btn" onclick="zoomIn()">🔍 Zoom +</button>
-    <button class="btn" onclick="zoomOut()">🔍 Zoom -</button>
-    <button class="btn" onclick="resetView()">⟲ Reset</button>
-  </div>
-
-  <div id="mindmap-container" class="mindmap-container"></div>
 </section>
 
 <section class="card info-box">
@@ -100,26 +44,120 @@ title: Metadata Scheme
   </ul>
 </section>
 
+<section class="mindmap-wrapper">
+  <div class="controls">
+    <button class="btn" onclick="zoomIn()">🔍 Zoom +</button>
+    <button class="btn" onclick="zoomOut()">🔍 Zoom -</button>
+    <button class="btn" onclick="resetView()">⟲ Reset</button>
+  </div>
+
+  <svg id="markmap"></svg>
+</section>
+
 <script src="/vendor/d3.min.js"></script>
 <script src="/vendor/markmap-lib.min.js"></script>
 <script src="/vendor/markmap-view.min.js"></script>
-
 <script>
   let mm = null;
-
+  // Define the color palette for main branches
+  const basePalette = [
+    '#FF6B6B',  // red
+    '#4ECDC4',  // teal
+    '#45B7D1',  // blue
+    '#FFA07A',  // salmon
+    '#98D8C8',  // mint
+    '#F7DC6F',  // yellow
+    '#BB8FCE',  // purple
+    '#85C1E2',  // light blue
+    '#F8A868',  // orange
+    '#DA70D6',  // magenta
+    '#72D4D4',  // cyan
+    '#C9B456',  // gold
+    '#7CB9E8',  // cornflower
+  ];
+  
+  // Map to store assigned color for each node
+  const nodeColors = new Map();
+  
+  function lightenColor(hex, amount) {
+    const num = parseInt(hex.slice(1), 16);
+    if (Number.isNaN(num)) return hex;
+    let r = (num >> 16) & 0xff;
+    let g = (num >> 8) & 0xff;
+    let b = num & 0xff;
+    r = Math.min(255, Math.max(0, r + amount));
+    g = Math.min(255, Math.max(0, g + amount));
+    b = Math.min(255, Math.max(0, b + amount));
+    return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+  }
+  
+  function assignColorsToTree(node, depth = 0, baseColor = null, branchIndex = 0) {
+    const nodeKey = node.content || node.value || '';
+    
+    // Root node
+    if (depth === 0) {
+      nodeColors.set(nodeKey, '#424242');
+      if (node.children) {
+        node.children.forEach((child, index) => {
+          assignColorsToTree(child, 1, basePalette[index % basePalette.length], index);
+        });
+      }
+      return;
+    }
+    
+    // First level - assign base color
+    if (depth === 1) {
+      nodeColors.set(nodeKey, baseColor);
+      if (node.children) {
+        node.children.forEach(child => {
+          assignColorsToTree(child, depth + 1, baseColor, branchIndex);
+        });
+      }
+      return;
+    }
+    
+    // Deeper levels - lighten the base color
+    const lightenAmount = (depth - 1) * 20;
+    const color = lightenColor(baseColor, lightenAmount);
+    nodeColors.set(nodeKey, color);
+    
+    if (node.children) {
+      node.children.forEach(child => {
+        assignColorsToTree(child, depth + 1, baseColor, branchIndex);
+      });
+    }
+  }
+  
+  function colorNode(node) {
+    const nodeKey = node.content || node.value || '';
+    return nodeColors.get(nodeKey) || '#424242';
+  }
+  
   async function loadSchemaAndRender() {
     try {
+      // Clear the color map
+      nodeColors.clear();
+
       const response = await fetch('/data/metadata-schema-mindmap.md');
       if (!response.ok) {
         throw new Error(`Failed to load schema: ${response.status}`);
       }
       const markdown = await response.text();
-
       const transformer = new window.markmap.Transformer();
       const { root } = transformer.transform(markdown);
 
+      // Pre-assign colors to all nodes
+      assignColorsToTree(root);
+
       const svg = document.getElementById('markmap');
-      mm = window.markmap.Markmap.create(svg, { initialExpandLevel: 2 }, root);
+
+      // Create options with color function
+      const options = {
+        initialExpandLevel: 2,
+        color: colorNode
+      };
+
+      mm = window.markmap.Markmap.create(svg, options, root);
       mm.fit();
     } catch (error) {
       console.error('Error:', error);
@@ -134,20 +172,25 @@ title: Metadata Scheme
   }
 
   function zoomIn() {
-    if (mm) mm.setZoom(mm.getZoom() * 1.2);
+    if (mm) {
+      mm.rescale(1.2);
+    }
   }
 
   function zoomOut() {
-    if (mm) mm.setZoom(mm.getZoom() / 1.2);
+    if (mm) {
+      mm.rescale(1 / 1.2);
+    }
   }
 
   function resetView() {
-    if (mm) mm.fit();
+    if (mm) {
+      mm.fit();
+    }
   }
 
   window.zoomIn = zoomIn;
   window.zoomOut = zoomOut;
   window.resetView = resetView;
-
   document.addEventListener('DOMContentLoaded', loadSchemaAndRender);
 </script>

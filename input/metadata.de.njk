@@ -4,104 +4,23 @@ permalink: metadata.de.html
 title: Metadaten
 ---
 
-<style>
-  .mindmap-wrapper {
-    margin: 20px 0;
-  }
-
-  #markmap {
-    width: 100%;
-    height: 600px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: white;
-  }
-  
-  #markmap text { font-size: 13px; }
-
-  #markmap {
-    transform: scale(0.85);
-    transform-origin: top left;
-  }
-
-  .controls {
-    margin: 15px 0;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .btn {
-    padding: 8px 16px;
-    background: #1976d2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.3s ease;
-  }
-
-  .btn:hover {
-    background: #1565c0;
-  }
-
-  .info-box {
-    background: #f5f5f5;
-    border-left: 4px solid #1976d2;
-    padding: 15px;
-    border-radius: 4px;
-    margin: 20px 0;
-  }
-
-  .info-box h3 {
-    margin-top: 0;
-    color: #1565c0;
-  }
-
-  .loading {
-    text-align: center;
-    padding: 40px 20px;
-    color: #666;
-  }
-
-  .error {
-    background: #ffebee;
-    border-left: 4px solid #d32f2f;
-    padding: 15px;
-    border-radius: 4px;
-    color: #d32f2f;
-  }
-
-  @media (max-width: 768px) {
-    .controls {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    #markmap {
-      height: 600px;
-    }
-  }
-</style>
-
 <section class="grid-area">
   <div class="highlight-grid">
     <div class="highlight-card">
-      <h3>Download Metadata Schema</h3>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-        <a href="/data/Dakoda_Metadata_Schema_v1.1.xlsx" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
-          Metadata Schema (.xlsx)
+      <h3>Metadatenschema herunterladen</h3>
+      <div class="metadata-download-container">
+        <a href="/data/Dakoda_Metadata_Schema_v1.1.xlsx" download class="metadata-download-link">
+          Metadatenschema (.xlsx)
         </a>
-        <a href="/data/Dakoda_Metadata_Schema_v1.1.csv" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
-          Metadata Schema (.csv)
+        <a href="/data/Dakoda_Metadata_Schema_v1.1.csv" download class="metadata-download-link">
+          Metadatenschema (.csv)
         </a>
       </div>
     </div>
     <div class="highlight-card">
-      <h3>Metadata Schema Project</h3>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-        <a href="https://github.com/dakoda-project/xmlmetadata" download style="padding: 8px 16px; background: #1976d2; color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s ease;">
+      <h3>Metadatenschema Repositorium</h3>
+      <div class="metadata-download-container">
+        <a href="https://github.com/dakoda-project/xmlmetadata" download class="metadata-download-link">
           Github
         </a>
       </div>
@@ -109,9 +28,9 @@ title: Metadaten
 </section>
 
 <section class="card">
-  <h1>DAKODA Metadaten Schema</h1>
+  <h1>DAKODA-Metadatenschema</h1>
   <p>
-    In der hierarchischen Struktur des DAKODA-Metadatenschemas in der interaktiven Mindmap finden Sie die harmonisierten Variablennamen der DAKODA-Datenbasis.
+    Erkunden Sie die hierarchische Struktur des DAKODA-Metadatenschemas in der interaktiven Mindmap.
   </p>
 </section>
 
@@ -218,7 +137,7 @@ title: Metadaten
     try {
       // Clear the color map
       nodeColors.clear();
-      
+
       const response = await fetch('/data/metadata-schema-mindmap.md');
       if (!response.ok) {
         throw new Error(`Failed to load schema: ${response.status}`);
@@ -226,23 +145,20 @@ title: Metadaten
       const markdown = await response.text();
       const transformer = new window.markmap.Transformer();
       const { root } = transformer.transform(markdown);
-      
+
       // Pre-assign colors to all nodes
       assignColorsToTree(root);
-      
+
       const svg = document.getElementById('markmap');
-      
+
       // Create options with color function
       const options = {
         initialExpandLevel: 2,
-        spacingVertical: 10,
-        spacingHorizontal: 80,
         color: colorNode
       };
-      
+
       mm = window.markmap.Markmap.create(svg, options, root);
       mm.fit();
-      mm.rescale(0.85);
     } catch (error) {
       console.error('Error:', error);
       showError(error.message);
