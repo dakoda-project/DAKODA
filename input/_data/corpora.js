@@ -30,6 +30,13 @@ function pickCEFR(val) {
 function detectDownloads(meta, fileSlug) {
   const availabilityRaw = String(pick(meta, "corpus_admin_availability", "corpus_admin_access") || "")
     .toLowerCase().trim();
+  if (availabilityRaw === "closed") {
+    return {
+      downloads: [],
+      downloads_folder: "",
+      downloads_base_url: ""
+    };
+  }
   const availabilityDir = availabilityRaw === "special restrictions" ? "restricted" : availabilityRaw;
   
   // Use corpus_subcorpus_signet (matches folder names), fallback to acronym then slug
