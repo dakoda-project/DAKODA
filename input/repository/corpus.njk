@@ -22,50 +22,81 @@ permalink: "repository/{{ corpus.fileSlug | lower }}/index.{{ corpus.data.langua
 <h1>{{ corpus.data.corpus_admin_name }}</h1>
 <p class="corpus-description">{{ corpus.data.description }}</p>
 
+<!-- ✅ Basic Metadata Display -->
 <div class="corpus-meta-card">
-  <h2>Corpus Metadata</h2>
   <table class="corpus-details">
-    <tr><th>Modality</th><td>{{ corpus.data.modality }}</td></tr>
-    <tr><th>Task Type</th><td>{{ corpus.data.task_type }}</td></tr>
-    <tr><th>Language</th><td>{{ corpus.data.language }}</td></tr>
-    <tr><th>Size in Texts</th><td>{{ corpus.data.size_texts }}</td></tr>
-    <tr><th>Size in Tokens</th><td>{{ corpus.data.size_in_tokens }}</td></tr>
-    <tr><th>Number of Learners</th><td>{{ corpus.data.num_learners }}</td></tr>
-    <tr><th>Proficiency</th><td>{{ corpus.data.proficiency }}</td></tr>
-    <tr><th>PT Stages Observed</th><td>{{ corpus.data.pt_stages_observed }}</td></tr>
-    <tr><th>Access</th><td>{{ corpus.data.access }}</td></tr>
-    <tr><th>Source</th><td><a href="{{ corpus.data.source }}" target="_blank">Source Project</a></td></tr>
-    <tr><th>PID</th><td>
-      <span class="copyable">{{ corpus.data.pid }}</span> 
-      <button class="copy-btn" data-copy="{{ corpus.data.pid }}">📋</button>
-    </td></tr>
-    <tr><th>Unique Handle</th><td>
-      <a href="{{ corpus.data.unique_handle }}" target="_blank">View Corpus</a> 
-      <button class="copy-btn" data-copy="{{ corpus.data.unique_handle }}">📋</button>
-    </td></tr>
-    <tr><th>Version</th><td>{{ corpus.data.version }}</td></tr>
+    <tr>
+      <th>Korpustitel</th>
+      <td>{{ corpus.data.corpus_admin_name }}</td>
+    </tr>
+    <tr>
+      <th>Korpus-ID</th>
+      <td>{{ corpus.data.corpus_subcorpus_signet }}</td>
+    </tr>
+    <tr>
+      <th>Anzahl L1</th>
+      <td>{{ corpus.data.corpus_design_l1Type }}</td>
+    </tr>
+    <tr>
+      <th>Kompetenzniveau</th>
+      <td>
+        {{ corpus.data.corpus_proficiency_levelMin }}
+        -
+        {{ corpus.data.corpus_proficiency_levelMax }}
+      </td>
+    </tr>
+    <tr>
+      <th>Anzahl Texte</th>
+      <td>{{ corpus.data.corpus_subcorpus_sizeTexts }}</td>
+    </tr>
+    <tr>
+      <th>Modalität</th>
+      <td>{{ corpus.data.modality }}</td>
+    </tr>
+    <tr>
+      <th>Projekt</th>
+      <td>
+        {% if corpus.data.corpus_admin_URLdownload %}
+          <a href="{{ corpus.data.corpus_admin_URLdownload }}" target="_blank">
+            Link zum Projekt
+          </a>
+        {% else %}
+          notAvailable
+        {% endif %}
+      </td>
+    </tr>
   </table>
 </div>
 
-<!-- ✅ Hierarchical Metadata Grouping with Dropdowns -->
+<!-- Hierarchical Metadata Grouping with Dropdowns -->
 {% set groups = {
-  "Admin Information": "corpus_admin_",
-  "Design Information": "corpus_design_",
-  "Proficiency Information": "corpus_proficiency_",
-  "Project Information": "corpus_project_",
-  "Subcorpus Info": "corpus_subcorpus_",
+  "Administrative": "corpus_admin_",
+  "Design": "corpus_design_",
+  "Proficiency": "corpus_proficiency_",
+  "Project": "corpus_project_",
+  "Subcorpus": "corpus_subcorpus_",
   "Production Setting": "productionSetting_"
 } %}
 
+<hr class="metadata-separator">
+
+<h2>Corpus Metadata</h2>
+
 {% for group, prefix in groups %}
-  {% if group == "Admin Information" or group == "Design Information" %}
-    <h2 class="metadata-heading">{{ group }}</h2>
+  <details>
+    <summary>
+      <h2 class="metadata-heading">{{ group }}</h2>
+    </summary>
+
     <table class="metadata-table">
       <tbody>
         {% for key, value in corpus.data %}
           {% if key.startsWith(prefix) %}
             <tr>
-              <td class="meta-key">{{ key | replace(prefix, "") | replace("_", " ") }}</td>
+              <td class="meta-key">
+                {{ displaynames[key] or (key | replace(prefix, "") | replace("_", " ")) }}
+              </td>
+
               <td class="meta-value">
                 {% if value is string %}
                   {{ value }}
@@ -78,30 +109,10 @@ permalink: "repository/{{ corpus.fileSlug | lower }}/index.{{ corpus.data.langua
         {% endfor %}
       </tbody>
     </table>
-  {% else %}
-    <details>
-      <summary><h2 class="metadata-heading">{{ group }}</h2></summary>
-      <table class="metadata-table">
-        <tbody>
-          {% for key, value in corpus.data %}
-            {% if key.startsWith(prefix) %}
-              <tr>
-                <td class="meta-key">{{ key | replace(prefix, "") | replace("_", " ") }}</td>
-                <td class="meta-value">
-                  {% if value is string %}
-                    {{ value }}
-                  {% else %}
-                    {{ value | dump }}
-                  {% endif %}
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
-    </details>
-  {% endif %}
+  </details>
 {% endfor %}
+
+<hr class="metadata-separator">
 
 <div class="corpus-downloads">
   <h2>Downloads</h2>
@@ -121,6 +132,8 @@ permalink: "repository/{{ corpus.fileSlug | lower }}/index.{{ corpus.data.langua
   {% endif %}
 </ul>
 </div>
+
+<hr class="metadata-separator">
 
 <p>
   <a href="{{ repoLink }}" class="back-link">← Back to Repository</a>
