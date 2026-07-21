@@ -1,84 +1,53 @@
 ---
 layout: base.njk
 permalink: docs.de.html
-title: Über uns – DAKODA-Infrastruktur
+title: Verbstellungsanalysen
 ---
 
-<h2>Über uns</h2>
+<main>
+  <section class="intro" style="text-align:left;">
+    <h1>Verbstellungsanalysen</h1>
+    <p>Im DAKODA‑Projekt wurden automatische Annotationen von Verbstellung und Erwerbsstufen in Lernertexten des Deutschen als L2 exploriert. 
+    Die DAKODA‑Infrastruktur ermöglicht die Erkundung und Analyse annotierter Datensätze in standardisierten Formaten (CAS) über mehrere Korpora hinweg.</p>
+  </section>
 
-<nav class="doc-nav">
-<!--
-  <a href="#about">Über das Projekt</a>
-  <a href="#corpora">Korpora</a>
-  <a href="#publications">Publikationen</a>
-  <a href="#team">Team</a>
-  <a href="#notebooks">Beispiel-Notebooks</a>
--->
-</nav>
+  <section class="card">
+    <h2>Workflow in DAKODA</h2>
+    <p>Auf dieser Seite stellen wir die Grundlagen der Verbstellungsanalyse im DAKODA‑Projekt dar. 
+    Details zu den einzelnen Verfahren zur Qualitätsprüfung und zu den technischen Schritten finden Sie in den verlinkten Referenzen.</p>
+  </section>
 
-<section id="about">
-  <h3>Über das Projekt</h3>
-  <p>
-    Im DAKODA-Projekt wurden automatische Annotationen von Verbstellung und Erwerbstsufen in Lernertexten des Deutschen als L2 exploriert. Die DAKODA-Infrastruktur ist eine Plattform zur Erkundung und Analyse der annotierten Datensätze in standartisierten Formaten (CAS) über mehrere Korpora hinweg.
-  </p>
-</section>
+  <section class="card">
+    <h2>Erwerbsstufenannotationen in DAKODA</h2>
+    <p>Um die DAKODA‑Daten für projektinterne Analysen und die spätere Bereitstellung in der Korpus‑Infrastruktur zu annotieren, wurde folgender Workflow verwendet:</p>
+    <ol>
+      <li>Harmonisierung der DAKODA‑Datenbasis in geeignete Formate.</li>
+      <li>Übernahme der bereits bestehenden Zielhypothesen aus den Quellkorpora und Metadaten.</li>
+      <li>Erstellung automatischer Zielhypothesen sowie Parsen und Taggen der Lernertexte und zugehöriger Zielhypothesen. Jeder Text wurde sowohl mit SyntaxDot nach dem DU‑Schema als auch mit spaCy nach dem TiGer‑Schema für das Deutsche geparst.</li>
+      <li>Automatische regelbasierte Annotation von Verbstellungstypen auf finiten Verben.</li>
+      <li>Kompilierung der originalen Korpusdaten (Texte, Metadaten, ggf. Zielhypothesen) und des DAKODA‑Annotationslayers im CAS‑Format in XMI‑Dateien.</li>
+      <li>Bereitstellung der unterschiedlichen Dateiformate zum Download. Mehr zu den einzelnen Downloadformaten finden Sie <a href="use.de.html">hier</a>.</li>
+    </ol>
+  </section>
 
-<section id="corpora">
-  <h3>Überblick über die Korpora</h3>
-  <p>
-    Verschiedene Korpora sind in die DAKODA-Infrastruktur integriert und decken unterschiedliche Modalitäten, Aufgabenarten
-    und Lernergruppen ab. Für spezifische Metadaten und Download-Optionen besuchen Sie bitte das
-    <a href="/repository/">Repository</a>.
-  </p>
-</section>
+  <section class="card">
+    <h2>Manuelle Annotation mit Stufentags</h2>
+    <p>Zur Überprüfung der automatischen Zuweisung der Erwerbsstufen annotierten Mitarbeiter:innen des DAKODA‑Projekts in mehreren Annotationsexperimenten die unterschiedlichen Verbstellungstypen gemäß der im Projekt erarbeiteten DAKODA‑Spezifikationen auf einer Datenauswahl der Lernerkorpora MERLIN (Winiewski et al. 2013) und (Wisniewski et al. 2022) mit anschließender Überprüfung des Inter‑Annotator Agreements.</p>
+    <p>Die Annotationsexperimente dienten zunächst dazu, zu messen, inwieweit menschliche Annotator:innen in der Analyse von Verbstellung übereinstimmten. Da Lernersprache oft ambig oder unterspezifiziert ist, wurden bei der Annotation von Verbstufen durch menschliche Annotator:innen jeweils auch minimale Zielhypothesen erstellt, um auf Grundlage der auf der Lernerspur annotierten Erwerbsstufe als Interpretationsebene transparent zu machen.</p>
+    <p>Weiterhin dienten die manuellen Annotationen als Goldstandard für die Beurteilung der Qualität der explorierten Verfahren.</p>
+  </section>
 
-<section id="publications">
-  <h3>Ausgewählte Publikationen</h3>
-  <ul>
-    <li>
-      Katrin Wisniewski, Torsten Zesch, Matthias Schwendemann, Josef Ruppenhofer und Annette Portmann. 2023
-      Automatische Analysen von Erwerbsstufen in einer großen Lernerkorpus-Datenbank für DaF/DaZ.
-      Das Forschungsprojekt DAKODA. Korpora Deutsch als Fremdsprache. Herausgeber:
-      Universitäts- und Landesbibliothek Darmstadt.
-    </li>
-    <li>
-      Josef Ruppenhofer, Matthias Schwendemann, Annette Portmann, Katrin Wisniewski und Torsten Zesch. 2024.
-      Every Verb in Its Right Place? A Roadmap for Operationalizing Developmental Stages in the Acquisition of L2 German.
-      In Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and
-      Evaluation (LREC-COLING 2024), Seiten 6655–6670, Torino, Italien. ELRA und ICCL.
-    </li>
-    <li>
-      Josef Ruppenhofer, Annette Portmann, Matthias Schwendemann, Christine Renker, Katrin Wisniewski und Torsten Zesch. 2025.
-      Where it’s at: Annotating Verb Placement Types in Learner Language. In Proceedings of the 19th Linguistic Annotation
-      Workshop (LAW-XIX-2025), Seiten 187–200, Wien, Österreich. Association for Computational Linguistics.
-    </li>
-    <!-- Weitere Publikationen später hinzufügen -->
-  </ul>
-</section>
+  <section class="card">
+    <h2>Automatisierte Erwerbsstufenannotation</h2>
+    <p>Die Konzeption der automatisierten Erwerbsstufenannotationen besteht aus einem regelbasierten Verfahren mit Merkmalen automatischer Dependenzparses, um finiten Verben im lernersprachlichen Datenmaterial einen oder mehrere Stellungstypen zuzuweisen. Mit den manuell erstellten Regeln wurden die Daten im nächsten Schritt automatisch mit syntaktischen Dependenzen annotiert, die geparsten Teil‑Sätze regelbasiert in das topologische Satzmodell einsortiert und auf diesem nach den DAKODA‑Spezifikationen den Erwerbsstufen zugeordnet.</p>
+  </section>
 
-<section id="team">
-  <h3>Projektteam</h3>
-  <ul>
-    <li>Uni Leipzig</li>
-    <ul>
-      <li>Lisa Lenort</li>
-      <li>Annette Portmann</li>
-      <li>Christine Renker</li>
-      <li>Matthias Schwendemann</li>
-      <li>Katrin Wisniewski (Projektleitung)</li>
-    </ul>
-    <li>FernUniversität in Hagen</li>
-    <ul>
-      <li>Josef Ruppenhofer</li>
-      <li>Torsten Zesch (Projektleitung)</li>
-    </ul>
-  </ul>
-</section>
-
-<!--
-<section id="notebooks">
-  <h3>Beispiel-Notebooks</h3>
-  <p>Wir bereiten eine Reihe exemplarischer Jupyter-Notebooks vor, die zeigen, wie CAS-Daten programmgesteuert abgefragt
-     und linguistische Muster visualisiert werden können. Diese werden demnächst im Bereich <code>Notebooks</code> verfügbar sein.</p>
-</section>
--->
+  <section class="card">
+    <h2>Annotationen von lernersprachlichen Daten</h2>
+    <p>Um ein automatisiertes Erwerbsstufenannotationsverfahren zu entwickeln, wurden im Projektverlauf mehrere Ansätze verfolgt. Die grundlegende Herausforderung besteht darin, dass lernersprachliche Daten von Zielsprachdaten abweichen, sodass bestehende Analyse‑Instrumente (z. B. automatische Parser oder POS‑Tagger) nicht zuverlässig auf Lernerdaten anwendbar sind. Oft werden in Einzelstudien aufwändige manuelle Verfahren für POS‑Tagging oder Parsing eingesetzt.</p>
+    <p>Zunächst wurden unterschiedliche minimale Zielhypothesen generiert. Die in DAKODA erstellten Zielhypothesen basieren auf verschiedenen Verfahren: Die mit <a href="https://huggingface.co/docs/transformers/model_doc/mbart">mBART</a> generierte Zielhypothese wird durch eine KI‑basierte automatische Übersetzungsmethode erzeugt, bei der vorhandene Abweichungen in wohlgeformte Teil‑Sätze korrigiert werden (GEC = Grammatical Error Correction). Eine zweite Zielhypothese wird durch <a href="https://github.com/NLP2CT/TransGEC">TransGEC</a> generiert und eine dritte Zielhypothese basiert auf dem Mistral‑Modell.</p>
+    <p>Ein Ansatz kombinierte die Ausgaben mehrerer Parser (transkit, syntaxdot, stanza, udpipe 1, udpipe 2) für die Lernerspur, um zu einer robusteren Analyse zu kommen. Ein zweiter Ansatz verglich den syntaxdot‑Parse der Lernerspur mit dem syntaxdot‑Parse einer automatisch erstellten Zielhypothese, um insbesondere den Stellungstyp ADV (mehrfach besetztes Vorfeld) zu erkennen.</p>
+    <p>Beide Ansätze erwiesen sich in der Praxis nicht deutlich besser als eine direkte Analyse auf der Lernerspur. Die DAKODA‑Daten enthalten dennoch die amalgamierten Parses und die generierten Zielhypothesen zu Dokumentationszwecken und ermöglichen weitere Analysen. Die Zielhypothesen stellen zudem eine orthographisch korrekte Normalisierungsebene dar. Da sie mit dem gleichen regelbasierten Verfahren wie die Lernerspur in Hinsicht auf Erwerbsstufen annotiert wurden, ermöglichen sie einen Vergleich der erkannten Verbstellung zwischen finiten Verbtokens auf der Lernerspur und der Zielhypothese.</p>
+    <p><strong>Hinweis:</strong> Die in den DAKODA‑Annotationen und im Dashboard angezeigten Erwerbsstufenannotationen sind das Ergebnis der oben skizzierten explorativen Erschließung und können weiterhin Fehler enthalten.</p>
+  </section>
+</main>

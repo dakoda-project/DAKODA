@@ -1,0 +1,58 @@
+---
+layout: base.njk
+permalink: use.de.html
+title: DAKODA-Infrastruktur
+---
+
+<main>
+  <section class="intro" style="text-align:left;">
+    <h1>Wie benutze ich DAKODA?</h1>
+    <p>
+      Um mit der DAKODA‑Infrastruktur zu arbeiten, bieten sich verschiedene Zugänge an. 
+      Sie können sich zunächst über das <a href="{{ '/dashboard.de.html' | url }}">DAKODA‑Dashboard</a> und das <a href="{{ '/repository.de.html' | url }}">Repositorium</a> einen Überblick über geeignete Korpora verschaffen. 
+      Mit den DAKODA‑Annotationen und den originalen Annotationen sowie <a href="{{ '/metadata.de.html' | url }}">Metadaten</a> können Sie eigene Fragestellungen bearbeiten. 
+      Die <a href="{{ '/notebooks.de.html' | url }}">Jupyter‑Notebooks</a> liefern Anleitungen zur Datenanalyse, die Sie korpusübergreifend anwenden können. 
+      Außerdem können Sie die <a href="{{ '/docs.de.html' | url }}">Spezifikationen des DAKODA‑Projekts</a> zur manuellen Annotation von Erwerbsstufen auf Ihre eigenen Korpusdaten anwenden.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Korpusübergreifende Analysen</h2>
+    <p>
+      Wenn Sie eine eigene Fragestellung mit einer korpusübergreifenden Analyse bearbeiten möchten und geeignete Korpusdaten suchen, können Sie mithilfe des Repositoriums passende Korpora in unterschiedlichen Formaten herunterladen.
+      <ol>
+        <li>Gehen Sie ins <a href="{{ '/repository.de.html' | url }}">Repositorium</a>.</li>
+        <li>Sie können in den Filtereinstellungen auswählen, ob Sie nach einzelsprachlichen Korpora (mono) – etwa dem Beldeko‑Korpus oder dem CDLK‑Korpus – oder nach mehrsprachigen Korpora (multi) filtern möchten. Weiter können Sie nach Modalität (gesprochen oder geschrieben) und nach GER‑Niveaus filtern.</li>
+        <li>Nachdem Sie Ihre Auswahl getroffen haben, gehen Sie zurück ins Repositorium und laden die Daten über das Download‑Symbol im gewünschten Format herunter. Für die weitere Analyse empfiehlt sich Python > 3.11 < 3.14.</li>
+      </ol>
+    <p><strong>Achtung:</strong> Die Zuweisung der GER‑Niveaus in den originalen wie auch in den DAKODA‑Metadaten beruht auf unterschiedlichen Kriterien. Teilweise fehlen Informationen zum GER‑Niveau, oder das Korpus deckt ein breites Niveau‑Spektrum ab. Eine zu starke Eingrenzung kann daher zu einer stark eingeschränkten Korpusauswahl führen.</p>
+    <p>
+        Unsicher, ob die Korpusdaten zu Ihrer Fragestellung passen? Nutzen Sie das <a href="{{ '/dashboard.de.html' | url }}">Dashboard</a>, um Lernendentexte mit Metadaten per Zufallsauswahl zu betrachten. Geben Sie im Suchfeld einen Variablennamen ein, um passende Metadaten zu finden. Das Metadaten‑Schema steht als .xlsx‑Download bereit. Links zu Originalkorpusseiten und Handbüchern erleichtern das Kennenlernen.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Dateiformate</h2>
+      <p>Als Downloadoptionen im <a href="{{ '/repository.de.html' | url }}">Repositorium</a> stehen Ihnen folgende Formate zur Verfügung:</p>
+    <ul>
+      <li>.xmi – Extensible Metadata Interchange, enthält Original‑ und DAKODA‑Annotationen. Öffnen Sie die Dateien z. B. mit dem <a href="https://nilsreiter.github.io/SimpleXmiViewer/">SimpleXmiViewer</a>. Für weitere Analysen empfiehlt sich Python.</li>
+      <li>.txt – Lernendentexte mit automatisch generierten Zielhypothesen; Metadaten sind beigefügt.</li>
+      <li>JSON‑Zip – harmonisierte Metadatenwerte nach dem DAKODA‑Metadatenschema (unter „meta“ im Dropdown‑Menü).</li>
+      <li>TEI (XML) – strukturiertes, reich annotiertes Format für weiterführende Analysen.</li>
+      <li>.exb – für Annotationen im EXMARaLDA‑Partitur‑Editor oder im Corpus‑Manager.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Datenanalyse</h2>
+    <p>
+        Arbeiten Sie mit den Korpusdaten in einem Jupyter‑Notebook, können Sie unsere vorbereiteten <a href="{{ '/notebooks.de.html' | url }}">Analyse‑Rezepte</a> ausprobieren und eigene Analysen durchführen. Die README im GitHub‑Repository enthält alle Schritte zum Starten der Notebooks. Jeder Schritt ist im Notebook kommentiert.
+    </p>
+    <p>
+      Benötigt werden mindestens Python 3.11 und die Poetry‑Umgebung (maximal Python 3.13). Alternativ ist der pip‑Installer möglich. Das DAKODA‑core‑Repository liefert alle notwendigen Instanzen für die Jupyter‑Umgebung.
+    </p>
+    <p>
+      Nach der Installation erscheint im Terminal ein Access‑Token, das im Jupyter‑Lab‑Browser‑Fenster eingegeben werden muss. Anschließend stehen die verfügbaren Notebooks zur Ansicht bereit oder Sie können ein neues Notebook für eigene Analysen starten.
+    </p>
+  </section>
+</main>

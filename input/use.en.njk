@@ -1,0 +1,60 @@
+---
+layout: base.njk
+permalink: use.en.html
+title: DAKODA-Infrastruktur
+---
+
+<main>
+  <section class="intro" style="text-align:left;">
+    <h1>How to use DAKODA?</h1>
+    <p>
+      There are several ways to work with the DAKODA infrastructure. 
+      You can start by using the <a href="{{ '/dashboard.en.html' | url }}">DAKODA dashboard</a> and the <a href="{{ '/repository.en.html' | url }}">repository</a> to get an overview of suitable corpora. 
+      You can use the DAKODA annotations, as well as the original annotations and <a href="{{ '/metadata.en.html' | url }}">metadata</a>, to address your own research questions. 
+      The <a href="{{ '/notebooks.en.html' | url }}">Jupyter Notebooks</a> provide guides for data analysis that you can apply across corpora. 
+      In addition, you can apply the <a href="{{ '/docs.en.html' | url }}">specifications of the DAKODA project</a> for the manual annotation of developmental stages to your own corpus data. 
+      The following sections provide general information on how the DAKODA infrastructure works and its various applications.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Cross-corpus analyses</h2>
+    <p>
+      If you would like to conduct a cross-corpus analysis to address a specific research question and are looking for suitable corpus data, you can use the repository to download corpora in various formats that are relevant to your research question.
+      <ol>
+        <ol>
+        <li>Go to the <a href="{{ '/repository.en.html' | url }}">repository</a>.</li>
+        <li>In the filter settings, you can choose whether to filter for single-language corpora (mono) – such as the Beldeko corpus (Strobl 2020) with German learners from Belgium or the CDLK corpus (Wu & Li 2022) with German learners from China – or corpora with learners of different L1s (multi).</li>
+        <li>Once you have made your selection, return to the repository and download the data in the desired format using the download icon. For further analysis, you can use Python (version >3.11<3.14), for example, for data preparation, corpus analysis, and statistical analysis. You will find an overview of the download formats in the next section.</li>
+      </ol>
+    <p><strong>Please note:</strong> The assignment of CEFR levels in the original metadata and in the DAKODA metadata is based on different criteria.</p>
+    <p>
+      If you are unsure whether the corpus data is suitable for your research question, you can first use the <a href="{{ '/dashboard.en.html' | url }}">dashboard</a> to view a random selection of learner texts along with their associated metadata. There, you can view the most important metadata variables, and you can search for specific variables in the expandable metadata section on the right. To do so, enter a variable name in German in the top field, and additional suggestions will appear to help refine your search. The meanings and translations of the individual variable names can be found in the metadata scheme, available for download as an .xlsx file. In the metadata, you will also find links to the original corpus pages and, in most cases, to existing manuals or publications about the corpora, so you can familiarize yourself with them further. 
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>File formats</h2>
+    <p>The following formats are available for download from the <a href="{{ '/repository.en.html' | url }}">repository</a>:</p>
+  <ul>
+    <li>The .xmi (Extensible Metadata Interchange) files contain the original corpus data and the DAKODA annotations for viewing in an XMI viewer. To open and easily review the annotations, you can use an editor or the SimpleXmiViewer. For further analysis and evaluation, we recommend using Python.</li>
+    <li>The .txt files (text files) contain the original learner texts and the automatically generated target hypotheses. The metadata for the learner texts is included with the text file.</li>
+    <li>You can download the harmonized metadata values based on the DAKODA metadata scheme as a JSON (JavaScript Object Notation) ZIP archive from the "meta" dropdown menu.</li>
+    <li>The XML-based TEI (Text Encoding Initiative) format provides the data in a structured and richly annotated format for further processing and analysis.</li>
+    <li>You can also download the data in .exb format to either add further annotations in the EXMARaLDA Partitur Editor or continue editing the data in the Corpus Manager.</li>
+  </section>
+
+  <section class="card">
+    <h2>Data analysis</h2>
+    <p>
+      If you'd like to work with the corpus data in a Jupyter Notebook, you can try out our pre-prepared <a href="{{ '/notebooks.en.html' | url }}">analysis recipes</a> and perform your own analyses in Jupyter Notebook. In the GitHub repository, you'll find all the necessary steps for running the notebooks in the README file. In the prepared Jupyter Notebooks, all individual steps and processes are explained in detail in the comments. 
+    </p>
+    <p>
+    You will need at least Python version 3.11 and the poetry environment (Note: only up to version 3.13 can be used for this); alternatively, you can also use the pip installer. 
+    Use the analysis-recipes GitHub repository to install the DAKODA-core repository, which contains all the necessary instances for performing further analyses in the Jupyter environment or running the prepared scripts.
+    </p>
+    <p>
+      After installation, an access token appears in the terminal, which must be entered in the JupyterLab browser window. The available notebooks will then be ready for viewing, or you can start a new notebook for your own analyses.
+    </p>
+  </section>
+</main>
