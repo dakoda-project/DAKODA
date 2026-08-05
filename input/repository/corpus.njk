@@ -116,21 +116,24 @@ permalink: "repository/{{ corpus.fileSlug | lower }}/index.{{ corpus.data.langua
 
 <div class="corpus-downloads">
   <h2>Downloads</h2>
-  {% set corpusFolder = corpus.data.corpus_name %}
-<ul>
-  {% if corpus.data.cas_data %}
-    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.cas_data }}" download>CAS-data</a></li>
+  {% set downloads = corpus.data.downloads %}
+  {% if downloads and downloads.length > 0 %}
+    <ul class="download-list">
+      {% for dl in downloads %}
+        <li>
+          <a href="{{ dl.url }}"
+             title="Download {{ dl.format }}"
+             {% if dl.external or dl.type == "download" %}
+               target="_blank" rel="noopener"
+             {% endif %}>
+            {{ dl.format }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Keine Downloads verfügbar.</p>
   {% endif %}
-  {% if corpus.data.plain_text %}
-    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.plain_text }}" download>Plain Text</a></li>
-  {% endif %}
-  {% if corpus.data.metadata_csv %}
-    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.metadata_csv }}" download>Metadata (CSV)</a></li>
-  {% endif %}
-  {% if corpus.data.source_format %}
-    <li><a class="button" href="/data/{{ corpusFolder }}/{{ corpus.data.source_format }}" download>Source Format</a></li>
-  {% endif %}
-</ul>
 </div>
 
 <hr class="metadata-separator">
