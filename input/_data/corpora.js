@@ -50,7 +50,8 @@ function detectDownloads(meta, fileSlug) {
   const formats = [
     { ext: "_xmi.zip", label: "xmi" },
     { ext: "_txt.zip", label: "txt" },
-    { ext: "_meta.zip", label: "meta" },
+    { ext: "_meta.zip", label: "meta-json" },
+    { fileName: `metadata_overview_${id}_corpus.xlsx`, label: "meta-xlsx" },
     { ext: "_tei.zip", label: "tei" },
     { ext: "_exb.zip", label: "exb" },
     { ext: ".xml", label: "xml" },
@@ -58,7 +59,7 @@ function detectDownloads(meta, fileSlug) {
   ];
   
   for (const fmt of formats) {
-    const fileName = `${id}${fmt.ext}`;
+    const fileName = fmt.fileName || `${id}${fmt.ext}`;
     const filePath = path.join(__dirname, "../data/repo", availabilityDir, id, fileName);
     if (fs.existsSync(filePath)) {
       downloads.push({
